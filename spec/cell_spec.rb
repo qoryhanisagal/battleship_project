@@ -1,83 +1,70 @@
-# spec/cell_spec.rb
-# This file tests the functionality of the Cell class.
-# It requires the 'spec_helper' to load the RSpec configuration.
+# Spec file for testing the Cell class
 require 'spec_helper'
+require_relative '../lib/cell'
+require_relative '../lib/ship'  # Ensures Ship class is available for testing in Cell
 
 RSpec.configure do |config|
-    config.formatter = :documentation
+  config.formatter = :documentation
 end
 
 RSpec.describe Cell do
-    describe '#initialize' do
-        it 'exists' do
-            cell = Cell.new("B4")
-
-            expect(cell).to be_a Cell
-        end
-
-        it 'has a coordinate' do
-            cell = Cell.new("B4")
-
-            expect(cell.coordinate).to eq "B4"
-        end
-
-        it 'does not have a ship' do
-            cell = Cell.new("B4")
-
-            expect(cell.ship).to eq nil
-        end
-
-        it 'has not been fired upon' do
-            cell = Cell.new("B4")
-
-            expect(cell.fired_upon?).to eq false
-        end
+  # JB: Basic initialization test for Cell class
+  describe '#initialize' do
+    it 'exists and has a coordinate' do
+      cell = Cell.new("B4")
+      expect(cell).to be_a(Cell)
+      expect(cell.coordinate).to eq("B4")
+      expect(cell.ship).to be_nil
     end
-    
-    describe 'behaviors' do
-        it 'can be empty' do
-            cell = Cell.new("B4")
+  end
 
-            expect(cell.empty?).to eq true
-        end
-
-        it 'can place a ship' do
-            cell = Cell.new("B4")
-            cruiser = Ship.new("Cruiser", 3)
-
-            cell.place_ship(cruiser)
-
-            expect(cell.empty?).to be false
-        end  
-        
-        it 'can be fired upon' do
-            cell = Cell.new("B4")
-            cruiser = Ship.new("Cruiser", 3)
-            
-            cell.place_ship(cruiser)
-
-            cell.fire_upon
-
-            expect(cell.ship.health).to eq 2
-        end
+  # JB: Testing ship placement functionality
+  describe '#place_ship' do
+    it 'can place a ship' do
+      cell = Cell.new("B4")
+      cruiser = Ship.new("Cruiser", 3)
+      cell.place_ship(cruiser)
+      expect(cell.ship).to eq(cruiser)
+      expect(cell.empty?).to be false
     end
+  end
 
-    describe '#render' do
-        it 'identifies a cell' do
-            cell_1 = Cell.new("B4")
-        
-            expect(cell_1.render).to eq '.'
-        end
-######### STOPPED HERE, want to talk about how we want to code misses
-        it 'marks a missed shot' do
-            cell_1 = Cell.new("B4")
-
-            cell_1.fire_upon
-            
-            expect(cell_1.render).to eq 'M'
-        end
-
-        it 'marks a ship that is hit' do
-            
+  # Qory: Testing fire_upon method and its effect on the ship's health
+  describe '#fire_upon' do
+    it 'can be fired upon and affect the ship' do
+      cell = Cell.new("B4")
+      cruiser = Ship.new("Cruiser", 3)
+      cell.place_ship(cruiser)
+      expect(cell.fired_upon?).to be false
+      cell.fire_upon
+      expect(cell.fired_upon?).to be true
+      expect(cell.ship.health).to eq(2)
     end
+  end
+
+  # JB and Qory: Testing render states for Cell, including hit, miss, sunk, and hidden ship options
+  describe '#render' do
+    it 'renders different states' do
+      cell_1 = Cell.new("B4")
+      expect(cell_1.render).to eq(".")
+      
+      cell_1.fire_upon
+      expect(cell_1.render).to eq("M")
+
+      cell_2 = Cell.new("C3")
+      cruiser = Ship.new("Cruiser", 3)
+      cell_2.place_ship(cruiser)
+      
+      expect(cell_2.render).to eq(".")
+      expect(cell_2.render(true)).to eq("S")
+
+      cell_2.fire_upon
+      expect(cell_2.render).to eq("H")
+
+      # Ensure rendering shows "X" if ship is sunk
+      cruiser.hit
+      cruiser.hit
+      expect(cell_2.render).to eq("X")
+    end
+  end
 end
