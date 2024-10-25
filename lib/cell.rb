@@ -6,7 +6,7 @@ class Cell
     # - fired_upon: indicates whether the cell has been fired upon or not.
     attr_reader :coordinate, :ship, :fired_upon
   
-    # Initialize method sets up a new cell with a given coordinate.
+    # QD - Initialize method sets up a new cell with a given coordinate.
     # A cell starts without a ship and hasn't been fired upon.
     def initialize(coordinate)
       @coordinate = coordinate
@@ -14,24 +14,24 @@ class Cell
       @fired_upon = false
     end
   
-    # place_ship method assigns a ship to the cell.
+    # JB - place_ship method assigns a ship to the cell.
     def place_ship(ship)
       @ship = ship
     end
   
-    # fired_upon? method returns true if the cell has been fired upon, false otherwise.
+    # JB - fired_upon? method returns true if the cell has been fired upon, false otherwise.
     def fired_upon?
       @fired_upon
     end
   
-    # fire_upon method marks the cell as fired upon.
+    # JB - fire_upon method marks the cell as fired upon.
     # If the cell contains a ship, it calls the hit method on the ship.
     def fire_upon
       @fired_upon = true
       @ship.hit if @ship
     end
   
-    # render method displays the current state of the cell.
+    # QD - render method displays the current state of the cell.
     # - "." if the cell has not been fired upon and is empty.
     # - "M" if the cell has been fired upon and missed (no ship).
     # - "H" if the cell has been hit (contains a ship and fired upon).
