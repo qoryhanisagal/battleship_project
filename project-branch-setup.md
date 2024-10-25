@@ -146,12 +146,18 @@ git checkout iteration-3-game-flow
 2. **Create the feature branches for Iteration 3:**
 ```ruby
 git checkout -b feature/game-logic
+```
+```ruby
 git checkout -b feature/computer-player
 ```
 3. **Switch back to the main branch and commit the setup:**
 ```ruby
 git checkout main
+```
+```ruby
 git add .
+```
+```ruby
 git commit -m "Set up feature branches for iteration 3: game-logic, computer-player"
 ```
 4. **Push the feature branches for Iteration 3:**
@@ -173,18 +179,36 @@ git checkout iteration-4-additional-features
 2. **Create the feature branches for Iteration 4:**
 ```ruby
 git checkout -b feature/variable-board-size
+```
+```ruby
 git checkout -b feature/custom-ships
+```
+```ruby
 git checkout -b feature/intelligent-computer
+```
+```ruby
 git checkout -b feature/ship-customization
+```
+```ruby
 git checkout -b feature/fog-of-war
+```
+```ruby
 git checkout -b feature/timed-rounds
+```
+```ruby
 git checkout -b feature/achievements-and-rewards
+```
+```ruby
 git checkout -b feature/battle-history-and-stats
 ```
 3. **Switch back to the main branch and commit the setup:**
 ```ruby
 git checkout main
+```
+```ruby
 git add .
+```
+```ruby
 git commit -m "Set up feature branches for iteration 4: ship-customization, fog-of-war, timed-rounds, achievements-and-rewards, battle-history-and-stats, variable-board-size, custom-ships, intelligent-computer"
 ```
 4. **Push the feature branches for Iteration 4:**
