@@ -37,4 +37,4 @@ Please review this files, let's chat before class say? 0800?
 **From:** [Jillian]
 
 **Message:**  
-Kicking off the Ships section now! 
+Ships complete, moving on to Cell!
