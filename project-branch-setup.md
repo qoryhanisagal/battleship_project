@@ -116,7 +116,20 @@ git checkout -b feature/board-class
 ```ruby
 git checkout -b feature/validations
 ```
-3. **Switch back to the main branch and commit the setup:**
+
+- Add code to your **board class**
+3. **Sumbit to Feature Branch**
+```ruby
+git checkout feature/board-class
+```
+4. ** Commit & Push to Hub**
+```ruby
+git add .
+```
+```ruby
+git commit -m "Set up feature branches for iteration 2: board-class, validations"
+```
+## Only for finished product Switch back to the main branch and commit the setup:
 ```ruby
 git checkout main
 ```
