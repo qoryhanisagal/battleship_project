@@ -37,4 +37,4 @@ Please review this files, let's chat before class say? 0800?
 **From:** [Jillian]
 
 **Message:**  
-In Iteration 1, "Ship" is complete and "Cell" has been started. Taking a break for our live session and will return to write the `place_ship` method!
+In Iteration 1, "Ship" is complete and "Cell" has been started. `place_ship` and `fire_upon` have been updated with lib/spec files. 

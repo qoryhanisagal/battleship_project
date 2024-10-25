@@ -31,6 +31,12 @@ RSpec.describe Cell do
 
             expect(cell.ship).to eq nil
         end
+
+        it 'has not been fired upon' do
+            cell = Cell.new("B4")
+
+            expect(cell.fired_upon?).to eq false
+        end
     end
     
     describe '#actions' do
@@ -47,7 +53,18 @@ RSpec.describe Cell do
             cell.place_ship(cruiser)
 
             expect(cell.empty?).to be false
-        end    
+        end  
+        
+        it 'can be fired upon' do
+            cell = Cell.new("B4")
+            cruiser = Ship.new("Cruiser", 3)
+            
+            cell.place_ship(cruiser)
+
+            cell.fire_upon
+
+            expect(cell.ship.health).to eq 2
+        end
         
     end
 
