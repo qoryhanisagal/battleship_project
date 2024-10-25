@@ -32,9 +32,9 @@ Please review this files, let's chat before class say? 0800?
 - requirements-for-iteration-4.md
 ---
 
-**Date:** [MM/DD/YYYY]
+**Date:** [10/25/2024]
 
 **From:** [Jillian]
 
 **Message:**  
-[Write your message here]
+Kicking off the Ships section now! 
