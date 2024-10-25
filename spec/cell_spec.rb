@@ -3,8 +3,6 @@
 # It requires the 'spec_helper' to load the RSpec configuration.
 require 'spec_helper'
 
-# Your tests go here...
-
 RSpec.configure do |config|
     config.formatter = :documentation
 end
