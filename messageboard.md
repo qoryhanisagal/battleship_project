@@ -32,18 +32,28 @@ Please review this files, let's chat before class say? 0800?
 - requirements-for-iteration-4.md
 ---
 
+=======
 # Message Board for Team Collaboration
 
-## Team Members
-- **Qory**
-- **Jillian**
 
+**Date:** [10/25/2024]
+
+**Form** Jillian
+- 
+**Message:**  
+
+In Iteration 1, "Ship" is complete and "Cell" has been started. `place_ship` and `fire_upon` have been updated with lib/spec files. 
+
+Started the `render` process but got stuck! 
+=======
 ---
 
 ## Purpose
 This message board is intended to keep track of communication between team members, document updates, and share notes on project tasks and decisions. Each entry should include the date, the topic or task, and any specific details or action items.
 
 #### Date: 2024-10-25
+**From:** Qory
+**Message:**  
 - **Topic**: Review and finalize Iteration 1 documentation
 - **Details**:
   - Reviewed TDD process and requirements checklist for Iteration 1.
@@ -56,6 +66,8 @@ This message board is intended to keep track of communication between team membe
 ---
 
 #### Date: 2024-10-26
+**From:** Qory
+**Message:**  
 - **Topic**: Implement `Ship` Class Methods
 - **Details**:
   - Discussed the need for an additional `sunk?` check within `Ship` class.
