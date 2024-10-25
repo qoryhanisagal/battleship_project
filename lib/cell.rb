@@ -20,8 +20,13 @@ class Cell
 
     def fire_upon
         @fired_upon = true
-        @ship.hit
+        
+        @ship.hit if @ship
+        end
+
     end
 
-
+    def render
+        return '.' unless @fired_upon
+    end
 end

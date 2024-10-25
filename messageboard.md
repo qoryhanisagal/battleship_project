@@ -38,3 +38,5 @@ Please review this files, let's chat before class say? 0800?
 
 **Message:**  
 In Iteration 1, "Ship" is complete and "Cell" has been started. `place_ship` and `fire_upon` have been updated with lib/spec files. 
+
+Started the `render` process but got stuck! 

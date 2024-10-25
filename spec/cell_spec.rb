@@ -1,12 +1,9 @@
-# spec/ship_spec.rb
+# spec/cell_spec.rb
 # This file tests the functionality of the Cell class.
 # It requires the 'spec_helper' to load the RSpec configuration.
 require 'spec_helper'
 
 # Your tests go here...
-
-require './lib/ship'
-require './lib/cell'
 
 RSpec.configure do |config|
     config.formatter = :documentation
@@ -39,7 +36,7 @@ RSpec.describe Cell do
         end
     end
     
-    describe '#actions' do
+    describe 'behaviors' do
         it 'can be empty' do
             cell = Cell.new("B4")
 
@@ -65,7 +62,24 @@ RSpec.describe Cell do
 
             expect(cell.ship.health).to eq 2
         end
-        
     end
 
+    describe '#render' do
+        it 'identifies a cell' do
+            cell_1 = Cell.new("B4")
+        
+            expect(cell_1.render).to eq '.'
+        end
+######### STOPPED HERE, want to talk about how we want to code misses
+        it 'marks a missed shot' do
+            cell_1 = Cell.new("B4")
+
+            cell_1.fire_upon
+            
+            expect(cell_1.render).to eq 'M'
+        end
+
+        it 'marks a ship that is hit' do
+            
+    end
 end

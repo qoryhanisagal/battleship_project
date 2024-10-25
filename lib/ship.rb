@@ -8,7 +8,9 @@ class Ship
     end
 
     def hit 
-        if @health >0
+        if @health == 0
+            puts "Ship has been sunk!"
+        else
             @health -= 1 
         end
     end

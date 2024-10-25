@@ -3,8 +3,6 @@
 # It requires the 'spec_helper' to load the RSpec configuration.
 require 'spec_helper'
 
-require_relative '../lib/ship'
-
 RSpec.configure do |config|
     config.formatter = :documentation
 end
