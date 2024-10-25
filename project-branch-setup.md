@@ -1,7 +1,7 @@
 # Project Branch Setup
 
 ---
- # Team Member: Qory
+ # Team Member: ✅ Done
 ## Step 1: Set up Iteration Branches (1-4)
 
 ### Commands:
@@ -34,9 +34,6 @@ git commit -m "Set up iteration branches: iteration-1, iteration-2, iteration-3,
 ```
 3. **Push each iteration branch to GitHub:**
 #### Push each branch individually:
-
-
-
 ```ruby
 git push -u origin iteration-1-ships-and-cells
 ```
@@ -49,23 +46,54 @@ git push -u origin iteration-3-game-flow
 ```ruby
 git push -u origin iteration-4-additional-features
 ```
+# Example for Ship Class Feature Branch
+⚡️⚡️⚡️**Please Read this how you do the git flow this** ⚡️ ⚡️ ⚡️ 
+#### Copy each command indivdually
+```ruby
+git checkout iteration-1-ships-and-cells
+```
+```ruby
+git checkout -b feature/ship-class
+```
+```ruby
+git checkout main
+```
+```ruby
+git add .
+```
+```ruby
+git commit -m "Set up feature branches for iteration 1: ship-class"
+```
+#### Push each branch individually:
+```ruby
+git push -u origin feature/ship-class
+```
+Follow the instruction below:
 
-## Step 2: Set Up Feature Branches within Each Iteration (1-4)
-
+# Team Member: Qory
+## Step 2: Set Up Feature Branches within Each Iteration (1-2)
+-----
 #### Iteration 1: Ships and Cells
 1. **Switch to the iteration-1-ships-and-cells branch:**
 ```ruby
 git checkout iteration-1-ships-and-cells
 ```
+
 2. **Create the feature branches for Iteration 1:**
 ```ruby
 git checkout -b feature/ship-class
+```
+```ruby
 git checkout -b feature/cell-class
 ```
 3. **Switch back to the main branch and commit the setup:**
 ```ruby
 git checkout main
+```
+```ruby
 git add .
+```
+```ruby
 git commit -m "Set up feature branches for iteration 1: ship-class, cell-class"
 ```
 4. **Push the feature branches for Iteration 1:**
@@ -84,12 +112,18 @@ git checkout iteration-2-the-board
 2. **Create the feature branches for Iteration 2:**
 ```ruby
 git checkout -b feature/board-class
+```
+```ruby
 git checkout -b feature/validations
 ```
 3. **Switch back to the main branch and commit the setup:**
 ```ruby
 git checkout main
+```
+```ruby
 git add .
+```
+```ruby
 git commit -m "Set up feature branches for iteration 2: board-class, validations"
 ```
 4. **Push the feature branches for Iteration 2:**
@@ -102,6 +136,7 @@ git push -u origin feature/validations
 ```
 
 # Team Member: Jillian
+## Set Up Feature Branches within Each Iteration (3-4)
 ### Iteration 3: Game Flow
 
 1. **Switch to the iteration-3-game-flow branch:**
