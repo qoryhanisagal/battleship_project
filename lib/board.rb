@@ -6,14 +6,14 @@ class Board
     end
 
     def create_cells
-        cell_hash = {}
-        ('A'..'D').each do |letter|
-            (1..4).each do |number|
+        grid = {}
+        ('A'..'D').each do |letter| #creates rows
+            (1..4).each do |number| #creates columns
                 coordinate = "#{letter}#{number}"
-                cell_hash[coordinate] = Cell.new(coordinate)
+                grid[coordinate] = Cell.new(coordinate)
             end
         end
-        cell_hash
+        grid
     end
 
     def valid_coordinate?(coordinate)
@@ -21,7 +21,16 @@ class Board
     end
 
     def valid_placement?(ship, coordinates)
+        #based on length of ship
         coordinates.length == ship.length
+
+        #based on consecutive cells
+
+
+
     end
 
 end
+
+require './lib/cell'
+require 'pry'; binding.pry
