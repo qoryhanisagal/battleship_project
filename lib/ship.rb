@@ -5,6 +5,7 @@ class Ship
         @name = name
         @length = length
         @health = length
+        @sunk = false
     end
 
     def hit 
@@ -15,4 +16,11 @@ class Ship
         end
     end
 
+    def sunk? 
+        if @health == 0
+            @sunk = true
+        else
+            false
+        end
+    end
 end
