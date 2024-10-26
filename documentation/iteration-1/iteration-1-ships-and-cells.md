@@ -31,7 +31,6 @@
 
 ---
 
->>>>>>> iteration-1-ships-and-cells
 ## Test-Driven Development (TDD) Process
 
 ### Test Failures and Fixes
@@ -80,5 +79,16 @@
   NoMethodError:
     undefined method `render` for #<Cell:0x00007fcd0a08f3d0>
     ```
+
 - **Failure Reason**: The `render` method was missing, so the test could not render cell states.
 - **Fix**: Implemented the render method in `Cell`, displaying "." for unvisited cells, "M" for misses, "H" for hits, and "X" if the ship is sunk.
+
+### Iteration Succcessess
+
+- **Completed Test Coverage:** All tests in cell_spec.rb pass.
+- **Refactoring Milestones:** Optimized render method for better readability.
+- **Integration:** Verified seamless interaction between Cell and Ship classes after placing ships in cells and firing upon cells.
+
+
+   
+
