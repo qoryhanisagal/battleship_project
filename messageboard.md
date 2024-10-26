@@ -48,3 +48,7 @@ Started the `render` process but got stuck!
 
 **Message:**  
 Began Board class/spec. I noticed my Iteration 1 is slightly off, not sure what issues that might cause to merge with main.
+
+Worked up to `valid_placement?` method creation, stopped and paused here (3pm ET). RSpec board file should be good to go, but lib file has not been updated so tests aren't all passing (yet!). 
+
+Planning to return to it tonight!
