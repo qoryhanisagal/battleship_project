@@ -40,3 +40,11 @@ Please review this files, let's chat before class say? 0800?
 In Iteration 1, "Ship" is complete and "Cell" has been started. `place_ship` and `fire_upon` have been updated with lib/spec files. 
 
 Started the `render` process but got stuck! 
+---
+
+**Date:** [10/26/24]
+
+**From:** Jillian 
+
+**Message:**  
+Began Board class/spec. I noticed my Iteration 1 is slightly off, not sure what issues that might cause to merge with main.
