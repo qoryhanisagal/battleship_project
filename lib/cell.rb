@@ -50,5 +50,4 @@ class Cell
         "."  # Unfired empty cell
       end
     end
- end
-
+end
