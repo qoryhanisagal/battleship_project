@@ -1,6 +1,3 @@
-# require './lib/cell'
-# require './lib/ship'
-
 class Board
     attr_reader :cells
 
@@ -25,23 +22,34 @@ class Board
     end
 
     def valid_placement?(ship, coordinates)
-        #based on length of ship
-        #coordinates.length == ship.length
-        if coordinates.length == ship.length &&
-            coordinates.each_cons(ship.length) do |coordinate|
-            end
-            true
-         else
-            false
-        end
-        #consecutive
-        #!diagonal
+        #coordinates.length == ship.length TRUE
+        #consecutive?(coordinates) TRUE
+        #NOT diagonal?(coordinates) TRUE
+       coordinates.length == ship.length && consecutive?(coordinates) && not_diagonal?(coordinates)
     end
 
+    def consecutive?(coordinates)
+        rows = coordinates.map { |coordinate| coordinate[0] }
+        columns = coordinates.map { |coordinate| coordinate[1..-1].to_i }
+
+        if rows.uniq.length == 1
+            # All coordinates are in the same row, check for consecutive columns
+            return columns.each_cons(2).all? { |a, b| b == a + 1 }
+         elsif columns.uniq.length == 1
+          # All in the same column, check if rows are consecutive
+            return rows.each_cons(2).all? { |a, b| b.ord == a.ord + 1 }
+        end
+    
+        false
+
+    end
+
+    def not_diagonal?(coordinates)
+        # Check if coordinates are diagonal
+        rows = coordinates.map { |coord| coord[0] }
+        columns = coordinates.map { |coord| coord[1..-1].to_i }
+    
+        rows.uniq.length != columns.uniq.length
+    end    
+
 end
-
-# board = Board.new
-# cruiser = Ship.new("Cruiser", 3)
-# submarine = Ship.new("Submarine", 2)  
-
-# require 'pry'; binding.pry

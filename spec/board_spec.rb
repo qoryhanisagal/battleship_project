@@ -47,13 +47,10 @@ RSpec.describe Board do
             submarine = Ship.new("Submarine", 2)  
 
             expect(board.valid_placement?(cruiser, ["A1", "A2"])).to eq false
-            expect(board.valid_placement?(cruiser, ["A1", "A2", "A3"])).to eq true
-
             expect(board.valid_placement?(submarine, ["A2", "A3", "A4"])).to eq false
-            expect(board.valid_placement?(submarine, ["A2", "A3"])).to eq true
         end
 
-        xit 'returns false if coordinates are not consecutive' do
+        it 'returns false if coordinates are not consecutive' do
             board = Board.new
             cruiser = Ship.new("Cruiser", 3)
             submarine = Ship.new("Submarine", 2)  
@@ -64,7 +61,7 @@ RSpec.describe Board do
             expect(board.valid_placement?(submarine, ["C1", "B1"])).to eq false
         end
 
-        xit 'returns false if coordinates are diagonal' do
+        it 'returns false if coordinates are diagonal' do
             board = Board.new
             cruiser = Ship.new("Cruiser", 3)
             submarine = Ship.new("Submarine", 2)  
@@ -73,7 +70,7 @@ RSpec.describe Board do
             expect(board.valid_placement?(submarine, ["C2", "D3"])).to eq false
         end
 
-        xit 'returns true if ship placement is valid' do
+        it 'returns true if ship placement is valid' do
             board = Board.new
             cruiser = Ship.new("Cruiser", 3)
             submarine = Ship.new("Submarine", 2) 
