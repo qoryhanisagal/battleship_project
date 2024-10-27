@@ -52,3 +52,10 @@ Began Board class/spec. I noticed my Iteration 1 is slightly off, not sure what 
 Worked up to `valid_placement?` method creation, stopped and paused here (3pm ET). RSpec board file should be good to go, but lib file has not been updated so tests aren't all passing (yet!). 
 
 Planning to return to it tonight!
+
+**Date:** 10/27/24
+
+**From:** Jillian
+
+**Message:**  
+Getting started this AM! Goal is to get through all the board specs. 
