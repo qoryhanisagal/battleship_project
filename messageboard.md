@@ -69,6 +69,8 @@ Got all Board specs to pass!
 **From:** Jillian
 
 **Message:**  
-Starting to set up the scaffolding/outline for Iteration 3. 
+Runner file has been updated to outline game play steps. Will need to be completed once Iteration 2 is complete!
+Taking a break for the afternoon, will check in this evening. 
+
 
 ---

@@ -41,8 +41,8 @@
 ## *from Iteration 3 Functionality Checklist:*
 ## Functionality Checklist
 This checklist summarizes all of the functionality you are expected to build. This will be used to assess the completion of your project:
-### Main Menu:
-- User is shown the main menu where they can play or quit
+### Main Menu: *JB- Done!*
+- *User is shown the main menu where they can play or quit*
 
 ### Setup:
 1. Computer can place ships randomly in valid locations
