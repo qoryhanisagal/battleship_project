@@ -61,3 +61,14 @@ Planning to return to it tonight!
 Getting started this AM! Goal is to get through all the board specs. 
 
 Got all Board specs to pass!
+
+---
+
+**Date:** 10/27/2024
+
+**From:** Jillian
+
+**Message:**  
+Starting to set up the scaffolding/outline for Iteration 3. 
+
+---
