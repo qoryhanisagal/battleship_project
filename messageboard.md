@@ -59,3 +59,4 @@ Planning to return to it tonight!
 
 **Message:**  
 Getting started this AM! Goal is to get through all the board specs. 
+Getting confused with writing code for `valid_placement?`-- stopped at the consecutive placement phase. Would love some help!
