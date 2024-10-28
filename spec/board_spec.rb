@@ -7,6 +7,10 @@ require './lib/board'
 require './lib/cell'
 require './lib/ship'
 
+RSpec.configure do |config|
+    config.formatter = :documentation
+  end
+
 # Spec for Board class
 RSpec.describe Board do
   before(:each) do

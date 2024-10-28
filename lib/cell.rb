@@ -14,6 +14,11 @@ class Cell
     @fired_upon = false
   end
 
+    # QD Return if there is no ship
+  def empty?
+    @ship.nil?  # Returns true if there is no ship in the cell, false otherwise
+  end
+
   # JB - place_ship method assigns a ship to the cell.
   def place_ship(ship)
     @ship = ship

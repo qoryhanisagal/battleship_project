@@ -2,6 +2,10 @@ require 'rspec'
 require './lib/cell'
 require './lib/ship'
 
+RSpec.configure do |config|
+  config.formatter = :documentation
+end
+
 # RSpec test suite for the Cell class, which represents a single cell on the game board.
 RSpec.describe Cell do
   # JB - Before each test, set up a new Cell instance and a Ship instance for testing.

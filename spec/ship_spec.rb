@@ -1,6 +1,10 @@
 require 'rspec'
 require './lib/ship'
 
+RSpec.configure do |config|
+  config.formatter = :documentation
+end
+
 # RSpec test suite for the Ship class, which represents a ship with a name, length, and health.
 RSpec.describe Ship do
   # JB - Before each test, set up a new Ship instance (Cruiser with length 3) for testing.
