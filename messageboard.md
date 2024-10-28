@@ -45,6 +45,28 @@ Please review this files, let's chat before class say? 0800?
 In Iteration 1, "Ship" is complete and "Cell" has been started. `place_ship` and `fire_upon` have been updated with lib/spec files. 
 
 Started the `render` process but got stuck! 
+
+
+**Date:** [10/26/24]
+
+**From:** Jillian 
+
+**Message:**  
+Began Board class/spec. I noticed my Iteration 1 is slightly off, not sure what issues that might cause to merge with main.
+
+Worked up to `valid_placement?` method creation, stopped and paused here (3pm ET). RSpec board file should be good to go, but lib file has not been updated so tests aren't all passing (yet!). 
+
+Planning to return to it tonight!
+
+**Date:** 10/27/24
+
+**From:** Jillian
+
+**Message:**  
+Getting started this AM! Goal is to get through all the board specs. 
+
+Got all Board specs to pass!
+=======
 =======
 ---
 
@@ -83,3 +105,4 @@ This message board is intended to keep track of communication between team membe
 - Remember to date each entry and list any action items with the responsible team member.
 
 ---
+
