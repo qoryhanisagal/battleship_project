@@ -101,10 +101,10 @@ RSpec.describe Board do
     it 'renders the board with different cell states' do
       # Expected render output for an empty board without showing ships.
       empty_render = "  1 2 3 4 \n" +
-                     "A . . . . \n" +
-                     "B . . . . \n" +
-                     "C . . . . \n" +
-                     "D . . . . \n"
+                     "A . . . .\n" +
+                     "B . . . .\n" +
+                     "C . . . .\n" +
+                     "D . . . .\n"
                      
       # Verifies rendering an empty board.
       # JB - Checks that render displays correctly when no ships are visible.
@@ -116,10 +116,10 @@ RSpec.describe Board do
 
       # Expected render output without revealing ships.
       hidden_render = "  1 2 3 4 \n" +
-                      "A . . . . \n" +
-                      "B . . . . \n" +
-                      "C . . . . \n" +
-                      "D . . . . \n"
+                      "A . . . .\n" +
+                      "B . . . .\n" +
+                      "C . . . .\n" +
+                      "D . . . .\n"
                       
       # Verifies rendering a board with hidden ships.
       # QD - Confirms render output when ships are hidden.
@@ -127,10 +127,10 @@ RSpec.describe Board do
 
       # Expected render output with ships visible.
       visible_render = "  1 2 3 4 \n" +
-                       "A S S S . \n" +
-                       "B . . . . \n" +
-                       "C . . . . \n" +
-                       "D . . . . \n"
+                       "A S S S .\n" +
+                       "B . . . .\n" +
+                       "C . . . .\n" +
+                       "D . . . .\n"
                        
       # Verifies rendering a board with ships visible.
       # JB - Ensures render shows ship locations when visibility is true.

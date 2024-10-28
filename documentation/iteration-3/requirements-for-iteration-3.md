@@ -20,7 +20,8 @@
    - **New Method**:
      - `valid_fire_coordinates?`: Ensures the player can only fire at valid, non-repeated coordinates.
    - **Update**:
-     - `fire_upon`: Tracks if a cell has already been fired upon, providing feedback if it has.
+     - `fire_upon`: Tracks if a cell has already been fired upon(invalid), providing feedback if it has(valid).
+     
 
 ### 2. **Cell Class**:
    - **Update**:
