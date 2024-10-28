@@ -1,6 +1,10 @@
 # Feature Difficulty and Impact
 
+<<<<<<< HEAD
+Jillian and I will discuss which of the following features to implement.
+=======
 We will discuss which of the following features to implement.
+>>>>>>> 88bce5054a25d12c5d3c1bba99e1719135526ab6
 
 ---
 
