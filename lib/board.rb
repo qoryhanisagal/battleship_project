@@ -1,82 +1,100 @@
-# The Board class manages the game board, including creating cells, placing ships, and validating placements.
+# The Board class represents the game board for Battleship.
+# It manages cells, validates placements, and handles rendering the board for the game.
+
+require './lib/cell'
+
+# QD - Initializes the board with a 4x4 grid by default.
+# JB - Responsible for creating cells and validating ship placements.
 class Board
-  # Provides read-only access to @cells, which stores all cell objects on the board.
   attr_reader :cells
 
-  # Initializes a new Board with a grid of cells.
-  # The @cells hash contains each coordinate as a key and a Cell object as a value.
+  # Initializes a new board with a specified cell grid (default 4x4).
+  # QD - Cells are stored in a hash with coordinates as keys and Cell objects as values.
+  # JB - Uses letters A-D for rows and numbers 1-4 for columns by default.
   def initialize
-    @cells = create_cells
+    @cells = {}
+    create_cells
   end
 
-  # Creates a 4x4 grid of cells with coordinates (e.g., "A1", "B2").
-  # Returns a hash where:
-  # - Each key is a coordinate string (e.g., "A1").
-  # - Each value is a new Cell object located at that coordinate.
+  # Creates cells for the board and stores them in the @cells hash.
+  # QD - Each cell is created with a unique coordinate as the key.
+  # JB - Utilizes A-D rows and 1-4 columns to fill the board.
   def create_cells
-    coordinates = ("A".."D").flat_map { |row| (1..4).map { |col| "#{row}#{col}" } }
-    coordinates.map { |coord| [coord, Cell.new(coord)] }.to_h
+    ("A".."D").each do |letter|
+      (1..4).each do |number|
+        coord = "#{letter}#{number}"
+        @cells[coord] = Cell.new(coord)
+      end
+    end
   end
 
-  # Checks if a given coordinate exists on the board.
-  # Returns true if the coordinate is a key in @cells, false otherwise.
-  def valid_coordinate?(coordinate)
-    @cells.key?(coordinate)
+  # Checks if a coordinate exists on the board.
+  # QD - Ensures only valid coordinates are used.
+  # JB - Prevents invalid placements or hits by verifying coordinate existence.
+  def valid_coordinate?(coord)
+    @cells.key?(coord)
   end
 
-  # Validates ship placement according to several rules:
-  # 1. All coordinates must be valid board coordinates.
-  # 2. Number of coordinates must match the ship's length.
-  # 3. Coordinates must be consecutive (either all in one row or one column).
-  # 4. There must be no overlap with other ships.
-  # Returns true if all conditions are met, false otherwise.
+  # Validates if a ship placement is allowed at the specified coordinates.
+  # QD - Checks ship length, consecutive placement, and lack of overlap.
+  # JB - Ensures ships are placed linearly (either row or column, not diagonally).
   def valid_placement?(ship, coordinates)
-    return false unless coordinates.all? { |coord| valid_coordinate?(coord) }
-    return false unless coordinates.length == ship.length
+    return false unless ship.length == coordinates.length
     return false unless consecutive_coordinates?(coordinates)
-    return false unless no_overlap?(coordinates)
+    return false if overlapping_ships?(coordinates)
 
     true
   end
 
-  # Places a ship at the specified coordinates if the placement is valid.
-  # Calls place_ship on each Cell object at the given coordinates.
+  # Checks if coordinates are consecutive and align in a row or column.
+  # QD - Validates that coordinates are sequential and not diagonal.
+  # JB - Ensures ships are aligned horizontally or vertically.
+  def consecutive_coordinates?(coordinates)
+    letters = coordinates.map { |coord| coord[0] }
+    numbers = coordinates.map { |coord| coord[1].to_i }
+
+    same_row = letters.uniq.size == 1 && consecutive?(numbers)
+    same_column = numbers.uniq.size == 1 && consecutive?(letters)
+
+    same_row || same_column
+  end
+
+  # Determines if elements in an array are consecutive.
+  # QD - Used for both row and column checks.
+  # JB - Simplifies validation for consecutive sequences.
+  def consecutive?(elements)
+    elements.each_cons(2).all? { |a, b| b == a + 1 }
+  end
+
+  # Checks if any of the given coordinates already have ships.
+  # QD - Prevents overlapping ships by ensuring cells are empty.
+  # JB - Returns false if no ships are present in the given cells.
+  def overlapping_ships?(coordinates)
+    coordinates.any? { |coord| !@cells[coord].empty? }
+  end
+
+  # Places a ship at the specified coordinates on the board.
+  # QD - Each coordinate cell is assigned the ship.
+  # JB - Only places the ship if coordinates are validated beforehand.
   def place(ship, coordinates)
-    return unless valid_placement?(ship, coordinates)
     coordinates.each { |coord| @cells[coord].place_ship(ship) }
   end
 
-  # Renders the board, displaying cell states based on the show_ships flag.
-  # - If show_ships is true, it reveals cells containing ships as "S".
-  # - By default (false), only shows hits, misses, and empty cells.
+  # Renders the board in a string format, showing cells' statuses.
+  # QD - Allows optional ship visibility with the show_ships parameter.
+  # JB - Default behavior hides ships unless show_ships is true.
   def render(show_ships = false)
-    "  1 2 3 4 \n" +               # Column headers
-      ("A".."D").map do |row|      # Iterate over each row ("A" to "D")
-        row + " " +                # Add row label (e.g., "A ")
-        (1..4).map do |col|        # Iterate over each column (1 to 4)
-          coord = "#{row}#{col}"   # Construct the coordinate (e.g., "A1")
-          @cells[coord].render(show_ships)  # Call render on each cell with show_ships flag
-        end.join(" ")              # Join cell states in the row with spaces
-      end.join("\n")               # Join rows with line breaks for full board view
-  end
+    rendered = "  1 2 3 4 \n"
 
-  private  # The following methods are only used within this class for validation.
-
-  # Checks that coordinates form a straight, consecutive line (horizontal or vertical).
-  # - Consecutive horizontally if all in one row, with columns in order.
-  # - Consecutive vertically if all in one column, with rows in order.
-  def consecutive_coordinates?(coordinates)
-    rows = coordinates.map { |coord| coord[0] }.uniq        # Get unique row letters
-    cols = coordinates.map { |coord| coord[1..-1].to_i }.uniq  # Get unique column numbers as integers
-
-    # Checks horizontal consecutiveness or vertical consecutiveness.
-    (rows.size == 1 && cols.each_cons(2).all? { |a, b| b == a + 1 }) ||   # Horizontal check
-      (cols.size == 1 && rows.each_cons(2).all? { |a, b| b.ord == a.ord + 1 })  # Vertical check
-  end
-
-  # Ensures no overlapping ships in the specified coordinates.
-  # Returns true if none of the cells at these coordinates already contain a ship.
-  def no_overlap?(coordinates)
-    coordinates.none? { |coord| @cells[coord].ship }
+    ("A".."D").each do |letter|
+      rendered += "#{letter} "
+      (1..4).each do |number|
+        coord = "#{letter}#{number}"
+        rendered += "#{@cells[coord].render(show_ships)} "
+      end
+      rendered.rstrip!
+      rendered += "\n"
+    end
+    rendered
   end
 end

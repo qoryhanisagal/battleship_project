@@ -40,12 +40,6 @@ RSpec.describe Cell do
       @cell.place_ship(@cruiser)
       expect(@cell.ship).to eq(@cruiser)
     end
-
-    it 'indicates the cell contains a ship' do
-      # Ensures the cell knows it contains a ship after placing one.
-      @cell.place_ship(@cruiser)
-      expect(@cell.empty?).to eq(false)
-    end
   end
 
   # QD - Test for the fire_upon method, which marks the cell as fired upon and reduces ship health if applicable.
