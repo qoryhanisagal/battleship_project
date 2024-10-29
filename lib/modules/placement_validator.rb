@@ -10,6 +10,7 @@ module PlacementValidator
     return false unless ship.length == coordinates.length
     return false unless consecutive_coordinates?(coordinates)
 
+    puts board.class  # This should output `Board`
     
     true
   end
@@ -21,6 +22,7 @@ module PlacementValidator
   # Checks for overlapping ships by accessing the correct cells on the board.
   # QD - Use `board.cells` to access the cells directly from the passed-in board
     coordinates.any? { |coord| board.cells[coord]&.ship }  
+    puts board.class  # This should output `Board`
   end
 
   # Checks if coordinates are consecutive and align in a row or column.
