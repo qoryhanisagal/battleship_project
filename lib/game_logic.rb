@@ -74,7 +74,7 @@ class GameLogic
       placed = false
       until placed
         coords = @computer_board.random_coordinates_for(ship)
-        if valid_placement?(ship, coords)
+        if valid_placement?(ship, coords, @computer_board)  # Pass board here
           @computer_board.place(ship, coords)
           placed = true
         end
@@ -92,7 +92,7 @@ class GameLogic
       until valid
         puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces):"
         coords = gets.chomp.upcase.split
-        if valid_placement?(ship, coords)
+        if valid_placement?(ship, coords, @player_board)  # Pass board here
           @player_board.place(ship, coords)
           valid = true
         else
@@ -183,4 +183,10 @@ end
     end
     main_menu
   end
+end
+# Let's Get this Party Started!!
+
+if __FILE__ == $0
+  game = GameLogic.new
+  game.start_game
 end

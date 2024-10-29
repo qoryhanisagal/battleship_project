@@ -5,18 +5,20 @@ module PlacementValidator
   # Validates ship placement based on length, alignment, and lack of overlap.
   # QD - Verifies that placement aligns with rules and checks cells for overlap.
   # JB - Ensures that a ship’s placement adheres to board constraints.
-  def valid_placement?(ship, coordinates, cells)
+  def valid_placement?(ship, coordinates, board)
     return false unless ship.length == coordinates.length
     return false unless consecutive_coordinates?(coordinates)
-    return false if overlapping_ships?(coordinates, cells)
+    return false if overlapping_ships?(coordinates, board)
     
     true
   end
 
   # Checks if any cells are already occupied by another ship.
   # QD - Avoids overlap by examining each cell for an existing ship.
-  def overlapping_ships?(coordinates, cells)
-    coordinates.any? { |coord| cells[coord]&.ship }
+
+  def overlapping_ships?(coordinates, board)
+  # Checks for overlapping ships by accessing the correct cells on the board.
+    coordinates.any? { |coord| @board.cells[coord]&.ship }  # Access @board.cells
   end
 
   # Checks if coordinates are consecutive and align in a row or column.
