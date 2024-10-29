@@ -69,6 +69,9 @@ class GameLogic
   # Places ships for the computer on random, valid coordinates.
   # QD - Uses the valid_placement? method to ensure placements are correct.
   # JB - Randomizes ship placement to increase replayability.
+
+  ##### For Placing Computer Ships #####
+
   def place_computer_ships
     @ships.each do |ship|
       placed = false
@@ -85,6 +88,8 @@ class GameLogic
   # Allows the player to manually place ships on their board.
   # QD - Guides the player through ship placement, with validations to prevent invalid entries.
   # JB - Ensures ships are placed on valid coordinates, using placement feedback.
+
+   ##### For Placing Player Ships #####
   def place_player_ships
     puts "Now it's time to place your ships on the board!"
     @ships.each do |ship|
