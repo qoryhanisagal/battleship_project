@@ -8,7 +8,8 @@ module GuessingStrategy
   # Initializes the strategy with necessary attributes for intelligent guessing.
   # QD - Keeps track of recent hits to target adjacent cells for better accuracy.
   # JB - Helps maintain a list of cells to prioritize based on hit patterns.
-  def initialize_guessing
+  def initialize_guessing(board)
+    @board = board  # Store the board instance for cell access
     @hit_tracking = []       # Stores coordinates of recent hits to target adjacent cells.
     @target_queue = []       # Queue of coordinates to guess after a hit.
   end
@@ -21,7 +22,7 @@ module GuessingStrategy
     if @target_queue.any?
       @target_queue.shift
     else
-      random_unfired_coordinate
+      @board.random_unfired_coordinate # Use board's method for random unfired coordinate #Help from Mentor
     end
   end
 
@@ -49,7 +50,7 @@ def add_adjacent_cells_to_queue(coordinate)
   # Find the index of the current row
   row_index = ROWS.index(row)
   
-  # Get adjacent cells without using .ord and .chr
+  # QD - Get adjacent cells
   adjacent_cells = [
     "#{row}#{col + 1}",               # Right
     "#{row}#{col - 1}",               # Left
@@ -58,8 +59,11 @@ def add_adjacent_cells_to_queue(coordinate)
   ]
 
   # Only add valid, unfired-upon cells
-  adjacent_cells.each do |cell|  # Checks if the cell is a valid, unfired cell before adding it to the queue
-    @target_queue << cell if valid_coordinate?(cell) && !@cells[cell].fired_upon?
+  adjacent_cells.each do |cell|
+    # Checks if the cell is a valid, unfired cell before adding it to the queue
+    if @board.valid_coordinate?(cell) && !@board.cells[cell].fired_upon? # Use @board.cells to access cell
+      @target_queue << cell
+    end
   end
 end
 
