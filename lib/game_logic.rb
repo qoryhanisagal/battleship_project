@@ -6,6 +6,7 @@ require_relative './cell'
 require_relative './modules/placement_validator'
 require_relative './modules/renderer'
 require_relative './modules/guessing_strategy'
+require_relative './computer_player'
 
 # QD - The GameLogic class manages the overall game flow, coordinating turns, placements, and win/loss checks.
 # JB - This class integrates separate modules for better modularity, including placement validation, rendering, and intelligent guessing.
@@ -15,7 +16,7 @@ class GameLogic
   include Renderer             # Manages board rendering for each turn
   include GuessingStrategy     # Provides intelligent guessing for the computer’s moves
 
-  attr_reader :player_board, :computer_board, :ships, :winner
+  attr_reader :player_board, :computer_board, :computer_player, :ships, :winner
 
   # Initializes the game setup with boards and ships.
   # QD - Sets up player and computer boards and default ships, preparing game state.
@@ -23,6 +24,7 @@ class GameLogic
   def initialize
     @player_board = Board.new
     @computer_board = Board.new
+    @computer_player = ComputerPlayer.new(@computer_board)  # Instantiate the ComputerPlayer with the computer board
     @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
     @winner = nil
   end
@@ -130,15 +132,15 @@ class GameLogic
     end
   end
 
-  # Manages the computer’s turn using an intelligent guessing strategy.
-  # QD - Computer uses the GuessingStrategy module to make educated shots.
-  # JB - Implements targeted guessing based on previous hits for more realistic AI behavior.
-  def computer_turn
-    coordinate = next_guess(@player_board) # From GuessingStrategy module
-    @player_board.cells[coordinate].fire_upon
-    puts "Computer fired on #{coordinate}."
-    puts feedback(@player_board.cells[coordinate])
-  end
+# Manages the computer’s turn using an intelligent guessing strategy.
+# QD - Computer uses the GuessingStrategy module to make educated shots.
+# JB - Implements targeted guessing based on previous hits for more realistic AI behavior.
+def computer_turn
+  coordinate = @computer_player.make_move  # Calls the computer player to make its calculated move
+  @player_board.cells[coordinate].fire_upon
+  puts "Computer fired on #{coordinate}."
+  puts feedback(@player_board.cells[coordinate])
+end
 
   # Provides feedback based on the shot outcome (miss, hit, or sunk).
   # QD - Returns a message indicating the result of the player’s or computer’s shot.
