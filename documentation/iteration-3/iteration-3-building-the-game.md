@@ -35,38 +35,79 @@
    - **Update**:
      - `render`: Now accounts for displaying both the player’s and computer’s boards, with hidden ships for the computer.
 
----
-
-### Spec File for `Game` Class
-
-- **File**: `spec/game_spec.rb`
-- **Purpose**: Tests the overall game flow, player and computer setup, turn-taking, and win conditions.
-
-**Key Tests in `game_spec.rb`**:
-1. **Game Start and Menu Options**:
-   - Ensures the game starts with a welcome message and offers options to play or quit.
-2. **Setup Phase**:
-   - Verifies that ships are placed correctly for both player and computer.
-3. **Turn Management**:
-   - Tests that turns alternate between player and computer.
-   - Ensures player can select valid coordinates and computer moves are generated correctly.
-4. **Win Condition**:
-   - Confirms that the game ends when one player sinks all the opposing ships.
-5. **Display Boards**:
-   - Tests board display for hits, misses, and sunk ships, showing player and computer boards.
-
----
-
-### Updates to Other Spec Files
-
-1. **`Board Spec` (`spec/board_spec.rb`)**:
+3. **`Board Spec` (`spec/board_spec.rb`)**:
    - **Additional Tests**:
      - Tests that players can only fire at valid, non-repeated coordinates.
      - Ensures repeated fire attempts on the same cell are handled gracefully.
 
-2. **`Cell Spec` (`spec/cell_spec.rb`)**:
+4. **`Cell Spec` (`spec/cell_spec.rb`)**:
    - **Additional Tests**:
      - Tests that `render` displays the correct state for both player and computer boards.
+
+# Iteration 3: Error Documentation
+
+## Summary
+This document captures the errors, debugging insights, and solutions encountered during Iteration 3. Each error is detailed with its cause, trial-and-error attempts, and the final solution.
+
+---
+
+### 1. Error: Misinterpretation of Player and Computer Boards
+
+**Error Details**
+- **Issue**: The game logic misinterpreted player and computer board states, causing incorrect winner declarations.
+- **Symptom**: The game declared the computer as the winner even when the player had clearly sunk all of the computer’s ships.
+
+**Cause**
+- Mismanagement of separate board states for player and computer, causing confusion in the `game_over?` logic and `end_game` announcements.
+
+**Solution**
+- **Solution Implemented**: Set up distinct checks in the `game_over?` method to determine if all computer ships were sunk or if all player ships were sunk, assigning a `@winner` variable to handle the state.
+- **Final Outcome**: Corrected win/loss logic by adding an `@winner` instance variable, allowing the game to declare the correct winner.
+
+---
+
+### 2. Error: Computer Firing on Already Fired Coordinates
+
+**Error Details**
+- **Issue**: The computer sometimes targeted previously fired-upon cells, disrupting game flow.
+- **Symptom**: Repeated misses or hits on the same cell.
+
+**Cause**
+- The `random_unfired_coordinate` method did not correctly track previously fired-upon cells.
+
+**Solution**
+- **Solution Implemented**: Updated `random_unfired_coordinate` to check that coordinates hadn’t already been fired upon, ensuring unique targeting each turn.
+- **Final Outcome**: Game flow improved as the computer fired on unique, valid cells.
+
+---
+
+### 3. Error: Invalid Ship Placement
+
+**Error Details**
+- **Issue**: Errors were raised when trying to place player ships at specific coordinates.
+- **Symptom**: Repeated messages like “Those coordinates are invalid” even though the coordinates seemed valid.
+
+**Cause**
+- The `valid_placement?` method lacked flexibility and failed to accommodate certain placements.
+
+**Solution**
+- **Solution Implemented**: Enhanced the `valid_placement?` method to be more comprehensive, ensuring that it allowed valid placements based on ship size and alignment rules.
+- **Final Outcome**: The player could successfully place ships at intended coordinates without error messages.
+
+---
+
+### 4. Error: Incorrect Feedback Messages
+
+**Error Details**
+- **Issue**: Feedback messages were incorrect, especially after sinking a ship.
+- **Symptom**: The game sometimes provided incorrect feedback about “sunk” ships.
+
+**Cause**
+- Overlaps in feedback logic within the `feedback` method.
+
+**Solution**
+- **Solution Implemented**: Rewrote the `feedback` method to prioritize “sunk” messages after checking for hits or misses.
+- **Final Outcome**: Improved accuracy in feedback, providing players with the correct result of each shot.
 
 ---
 
