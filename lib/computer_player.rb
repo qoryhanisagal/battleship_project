@@ -18,18 +18,25 @@ class ComputerPlayer
     @target_queue = []  # Queue for storing target coordinates after hits
     initialize_guessing(@board) # Initializes attributes from GuessingStrategy (@hit_tracking)
   end
-
+  
   # Main move method; decides the next coordinate to fire upon.
   # QD - Uses calculated moves when hits exist, otherwise a random move.
   # JB - Adds hit targets to the queue to prioritize calculated shots.
   def make_move
+    # Step 1: Calculate the next move based on guessing strategy
     coordinate = calculate_next_move  # Calls GuessingStrategy for next move
-    @board.cells[coordinate].fire_upon  # Fires on the selected cell
     
-    # Debugging line to confirm the cell is marked as fired upon
-    puts "Fired upon #{coordinate}: #{@board.cells[coordinate].fired_upon?}"
-  
-    update_strategy(coordinate, @board.cells[coordinate].ship) if @board.cells[coordinate].ship  # Adds neighbors if a ship was hit
+    # Step 2: Fire upon the calculated coordinate if it exists
+    if coordinate
+      @board.cells[coordinate].fire_upon  # Fires on the selected cell
+      
+      # Step 3: Update strategy if a ship was hit (adding adjacent cells to queue)
+      # If a ship is present at the coordinate and it was hit, update the strategy.
+      hit = @board.cells[coordinate].ship
+      update_strategy(coordinate, hit) if hit
+    end
+    
+    # Step 4: Return the chosen coordinate for reference (e.g., logging or testing)
     coordinate
   end
 end

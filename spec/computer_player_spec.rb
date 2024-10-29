@@ -62,7 +62,7 @@ RSpec.describe ComputerPlayer do
 
     it 'fires on a new cell when target queue is empty' do
       # Ensures that a move can be made with an empty queue
-      next_move = @computer_player.calculate_next_move
+      next_move = @computer_player.make_move
       expect(@board.cells[next_move].fired_upon?).to be true
     end
   end
