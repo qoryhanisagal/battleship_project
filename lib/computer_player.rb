@@ -25,6 +25,10 @@ class ComputerPlayer
   def make_move
     coordinate = calculate_next_move  # Calls GuessingStrategy for next move
     @board.cells[coordinate].fire_upon  # Fires on the selected cell
+    
+    # Debugging line to confirm the cell is marked as fired upon
+    puts "Fired upon #{coordinate}: #{@board.cells[coordinate].fired_upon?}"
+  
     update_strategy(coordinate, @board.cells[coordinate].ship) if @board.cells[coordinate].ship  # Adds neighbors if a ship was hit
     coordinate
   end

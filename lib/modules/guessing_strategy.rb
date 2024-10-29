@@ -26,17 +26,20 @@ module GuessingStrategy
     end
   end
 
-  # Updates the strategy based on the result of a shot.
-  # QD - If a hit, adds adjacent cells to the target queue for the next moves.
-  # JB - Ensures a ship is fully hit by tracking nearby cells until it's sunk.
-  def update_strategy(coordinate, hit)
-    if hit
-      @hit_tracking << coordinate
-      add_adjacent_cells_to_queue(coordinate)
-    else
-      @hit_tracking.clear if ship_sunk?  # Clears tracking if the ship is sunk
+# Updates the strategy based on the result of a shot.
+# QD - If a hit, adds adjacent cells to the target queue for the next moves.
+# JB - Ensures a ship is fully hit by tracking nearby cells until it's sunk.
+def update_strategy(coordinate, hit)
+  if hit
+    @hit_tracking << coordinate
+    add_adjacent_cells_to_queue(coordinate)
+  else
+    if ship_sunk?
+      puts " Haha your Ship has sunk. Clearing target queue"  # Debug message for sinking
+      @target_queue.clear  # Clears tracking if the ship is sunk
     end
   end
+end
 
 # Define row array to manage rows more clearly
 ROWS = ("A".."D").to_a
