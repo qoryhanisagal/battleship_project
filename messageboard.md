@@ -66,6 +66,7 @@ Planning to return to it tonight!
 Getting started this AM! Goal is to get through all the board specs. 
 
 Got all Board specs to pass!
+
 =======
 =======
 ---
@@ -106,3 +107,17 @@ This message board is intended to keep track of communication between team membe
 
 ---
 
+=======
+
+---
+
+**Date:** 10/27/2024
+
+**From:** Jillian
+
+**Message:**  
+Runner file has been updated to outline game play steps. Will need to be completed once Iteration 2 is complete!
+Taking a break for the afternoon, will check in this evening. 
+
+
+---
