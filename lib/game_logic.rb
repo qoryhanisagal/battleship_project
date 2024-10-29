@@ -1,49 +1,88 @@
 # lib/game_logic.rb
 
-# Require necessary files and modules
 require_relative './board'
-require_relative './computer_player'
 require_relative './ship'
-require_relative './placement_validator'
-require_relative './renderer'
-require_relative './guessing_strategy'
+require_relative './cell'
+require_relative './modules/placement_validator'
+require_relative './modules/renderer'
+require_relative './modules/guessing_strategy'
 
-# GameLogic class: Manages the overall game flow, setup, and turn-taking.
-# Uses modules for placement, rendering, and guessing strategy to organize game logic.
+# QD - The GameLogic class manages the overall game flow, coordinating turns, placements, and win/loss checks.
+# JB - This class integrates separate modules for better modularity, including placement validation, rendering, and intelligent guessing.
+
 class GameLogic
-  include PlacementValidator  # QD - Handles ship placement validations
-  include Renderer            # JB - Manages board rendering
-  include GuessingStrategy    # QD - Supports intelligent computer move choices
+  include PlacementValidator   # Manages ship placement validation
+  include Renderer             # Manages board rendering for each turn
+  include GuessingStrategy     # Provides intelligent guessing for the computer’s moves
 
-  # Initializes the game with player board, computer player, and predefined ships.
-  # QD - Sets up essential components for a new game session.
-  # JB - Initializes core attributes to handle game flow and board state.
+  attr_reader :player_board, :computer_board, :ships, :winner
+
+  # Initializes the game setup with boards and ships.
+  # QD - Sets up player and computer boards and default ships, preparing game state.
+  # JB - Ensures initial setup is isolated, making it easier to modify board size and ship types if needed.
   def initialize
-    @player_board = Board.new                      # QD - Player's game board
-    @computer_player = ComputerPlayer.new(@player_board)  # JB - AI-driven opponent setup
-    @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)] # QD - Default ships for each player
+    @player_board = Board.new
+    @computer_board = Board.new
+    @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+    @winner = nil
   end
 
-  # Starts the game by welcoming the player, setting up boards, and starting the main loop.
-  # QD - Initiates game setup and main game loop.
-  # JB - Ensures game starts with appropriate player instructions.
+  #### START GAME ####
+  # QD - Displays a welcome message and initiates the main menu for player interaction.
+  # JB - Allows players to start a new game or exit.
   def start_game
     puts "Welcome to BATTLESHIP!"
-    setup_boards
-    game_loop
+    main_menu
   end
 
-  # Sets up player and computer boards by placing ships.
-  # QD - Directs both player and computer to place ships.
-  # JB - Essential for establishing the starting state of each board.
-  def setup_boards
-    place_player_ships       # QD - Guides player through ship placement
-    place_computer_ships      # JB - Automates computer ship placement using AI
+  #### MAIN MENU ####
+  # QD - Provides options to start or quit the game.
+  # JB - Takes input from the player to either begin the game or end the session.
+  def main_menu
+    puts "Enter p to play. Enter q to quit."
+    input = gets.chomp.downcase
+
+    case input
+    when "p"
+      play_game
+    when "q"
+      puts "Thank you for playing. Goodbye!"
+      exit
+    else
+      puts "Invalid input. Please enter 'p' to play or 'q' to quit."
+      main_menu
+    end
   end
 
-  # Handles player ship placement, validating each input.
-  # QD - Allows player to place ships manually with valid input only.
-  # JB - Rechecks each placement to ensure it’s within game rules.
+  #### GAME SETUP ####
+  # QD - Begins the game by setting up ship placements for both player and computer.
+  # JB - Manages separate board setups, ensuring each player’s board is configured before gameplay.
+  def play_game
+    puts "Let's get started!"
+    place_computer_ships
+    place_player_ships
+    take_turn
+  end
+
+  # Places ships for the computer on random, valid coordinates.
+  # QD - Uses the valid_placement? method to ensure placements are correct.
+  # JB - Randomizes ship placement to increase replayability.
+  def place_computer_ships
+    @ships.each do |ship|
+      placed = false
+      until placed
+        coords = @computer_board.random_coordinates_for(ship)
+        if valid_placement?(ship, coords)
+          @computer_board.place(ship, coords)
+          placed = true
+        end
+      end
+    end
+  end
+
+  # Allows the player to manually place ships on their board.
+  # QD - Guides the player through ship placement, with validations to prevent invalid entries.
+  # JB - Ensures ships are placed on valid coordinates, using placement feedback.
   def place_player_ships
     puts "Now it's time to place your ships on the board!"
     @ships.each do |ship|
@@ -51,7 +90,6 @@ class GameLogic
       until valid
         puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces):"
         coords = gets.chomp.upcase.split
-        # Validates and places ship if coordinates are correct
         if valid_placement?(ship, coords)
           @player_board.place(ship, coords)
           valid = true
@@ -62,21 +100,85 @@ class GameLogic
     end
   end
 
-  # Automates computer ship placement using the ComputerPlayer class.
-  # QD - Delegates ship placement to the AI for automated setup.
-  # JB - Ensures ship placement meets all rules before starting the game.
-  def place_computer_ships
-    @computer_player.place_ships(@ships)
-  end
-
-  # Alternates turns between player and computer until one side wins.
-  # QD - Main loop controlling turn-taking until game ends.
-  # JB - Ensures game flow remains consistent and evaluates win conditions.
-  def game_loop
-    until game_over?     # QD - Runs loop as long as no winner is declared
-      player_turn        # QD - Initiates player’s turn each round
-      computer_turn unless game_over?  # JB - AI’s turn only if game is ongoing
+  #### GAMEPLAY ####
+  # Alternates turns between the player and computer until one player's ships are sunk.
+  # QD - Manages turn-based gameplay, switching between player and computer actions.
+  # JB - Ends gameplay loop when win/loss conditions are met.
+  def take_turn
+    until game_over?
+      player_turn
+      computer_turn unless game_over?  # Prevents extra computer turn if player wins
     end
     end_game
+  end
+
+  # Manages the player’s turn by allowing them to fire at the computer’s board.
+  # QD - Displays the computer's board state and takes player input for the shot.
+  # JB - Ensures valid coordinates are targeted and avoids repeated shots on the same cell.
+  def player_turn
+    puts "Your turn! Here's the computer's board:"
+    puts render(@computer_board, show_ships: false)
+    puts "Enter the coordinate for your shot:"
+    coordinate = gets.chomp.upcase
+
+    if valid_coordinate?(coordinate, @computer_board) && !@computer_board.cells[coordinate].fired_upon?
+      @computer_board.cells[coordinate].fire_upon
+      puts feedback(@computer_board.cells[coordinate])
+    else
+      puts "Invalid coordinate or already fired upon. Try again."
+      player_turn
+    end
+  end
+
+  # Manages the computer’s turn using an intelligent guessing strategy.
+  # QD - Computer uses the GuessingStrategy module to make educated shots.
+  # JB - Implements targeted guessing based on previous hits for more realistic AI behavior.
+  def computer_turn
+    coordinate = next_guess(@player_board) # From GuessingStrategy module
+    @player_board.cells[coordinate].fire_upon
+    puts "Computer fired on #{coordinate}."
+    puts feedback(@player_board.cells[coordinate])
+  end
+
+  # Provides feedback based on the shot outcome (miss, hit, or sunk).
+  # QD - Returns a message indicating the result of the player’s or computer’s shot.
+  # JB - Differentiates between hits, misses, and sunk ships to inform the player accurately.
+  def feedback(cell)
+    if cell.empty?
+      "Miss!"
+    elsif cell.ship.sunk?
+      "Hit! You sunk the #{cell.ship.name}!"
+    else
+      "Hit!"
+    end
+  end
+
+  #### WIN/LOSS CHECKS ####
+  # Determines if all ships of one player are sunk, ending the game.
+  # QD - Sets @winner based on which board has all ships sunk.
+  # JB - Manages win/loss conditions by verifying the state of each board’s ships.
+  def game_over?
+    if all_ships_sunk?(@computer_board)
+      @winner = "player"
+      true
+    elsif all_ships_sunk?(@player_board)
+      @winner = "computer"
+      true
+    else
+      false
+    end
+  end
+
+  #### END GAME ####
+  # Ends the game and announces the winner.
+  # QD - Displays the final game result and returns to the main menu.
+  # JB - Concludes the game loop and resets for potential new games.
+  def end_game
+    if @winner == "player"
+      puts "Congratulations, you won!"
+    elsif @winner == "computer"
+      puts "You lost! The computer won!"
+    end
+    main_menu
   end
 end
