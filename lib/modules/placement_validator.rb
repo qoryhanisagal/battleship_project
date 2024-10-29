@@ -1,16 +1,27 @@
 # lib/modules/placement_validator.rb
+# lib/modules/placement_validator.rb
 
-# PlacementValidator module contains methods to validate ship placements on the board.
 module PlacementValidator
-  # QD - Validates if a ship placement is allowed based on length, alignment, and overlap.
-  # JB - Ensures ships are placed in a line (either horizontally or vertically) and do not overlap.
-  
-  # Checks if the placement length matches the ship length.
-  def valid_placement_length?(ship, coordinates)
-    ship.length == coordinates.length
+  # Validates ship placement based on length, alignment, and lack of overlap.
+  # QD - Verifies that placement aligns with rules and checks cells for overlap.
+  # JB - Ensures that a ship’s placement adheres to board constraints.
+  def valid_placement?(ship, coordinates, cells)
+    return false unless ship.length == coordinates.length
+    return false unless consecutive_coordinates?(coordinates)
+    return false if overlapping_ships?(coordinates, cells)
+    
+    true
   end
 
-  # Checks if the coordinates are consecutive and aligned in a row or column.
+  # Checks if any cells are already occupied by another ship.
+  # QD - Avoids overlap by examining each cell for an existing ship.
+  def overlapping_ships?(coordinates, cells)
+    coordinates.any? { |coord| cells[coord]&.ship }
+  end
+
+  # Checks if coordinates are consecutive and align in a row or column.
+  # QD - Validates that coordinates form a straight line, ensuring correct alignment.
+  # JB - Confirms ships are placed in either a horizontal or vertical line.
   def consecutive_coordinates?(coordinates)
     letters = coordinates.map { |coord| coord[0] }
     numbers = coordinates.map { |coord| coord[1].to_i }
@@ -22,23 +33,13 @@ module PlacementValidator
   end
 
   # Determines if elements in an array are consecutive.
+  # QD - Used for validating consecutive rows or columns.
+  # JB - Checks that each element is in direct sequence with the previous.
   def consecutive?(elements)
     if elements.all? { |el| el.is_a?(Integer) }
       elements.each_cons(2).all? { |a, b| b == a + 1 }
     else
       elements.map { |el| el.ord }.each_cons(2).all? { |a, b| b == a + 1 }
     end
-  end
-
-  # Checks if any of the given coordinates already have ships to prevent overlapping.
-  def overlapping_ships?(coordinates, cells)
-    coordinates.any? { |coord| cells[coord]&.ship }
-  end
-
-  # Main method to validate a ship placement.
-  def valid_placement?(ship, coordinates, cells)
-    valid_placement_length?(ship, coordinates) &&
-      consecutive_coordinates?(coordinates) &&
-      !overlapping_ships?(coordinates, cells)
   end
 end

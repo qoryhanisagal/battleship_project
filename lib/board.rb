@@ -39,7 +39,7 @@ class Board
   # QD - Uses the PlacementValidator's logic to check if a ship placement is valid.
   # JB - Checks if ship placement adheres to board rules without embedding all validation directly.
   def valid_placement?(ship, coordinates)
-    valid_placement?(ship, coordinates, @cells)
+    super(ship, coordinates, @cells)
   end
 
   # Checks if a coordinate exists on the board.
@@ -60,6 +60,13 @@ class Board
         puts "Invalid coordinate detected: #{coord}"  # Debug line
       end
     end
+  end
+
+  # Renders the board, using Renderer module to output board visual.
+  # QD - Uses render_board method from Renderer to handle display logic.
+  # JB - Keeps rendering logic separate, making Board class easier to maintain.
+  def render(show_ships = false)
+    render_board(@cells, @width, @height, show_ships)  # Uses Renderer’s render_board method
   end
 
   # Generates random valid coordinates for placing a ship on the board.
