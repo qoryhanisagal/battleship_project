@@ -1,3 +1,5 @@
+# lib/modules/guessing_strategy.rb
+
 # The GuessingStrategy module contains methods for intelligent guessing in the Battleship game.
 # It helps the computer player make educated guesses based on previous hits.
 # Authors: JB (Jillian) and QD (Qory)
@@ -35,20 +37,34 @@ module GuessingStrategy
     end
   end
 
-  # Adds adjacent cells of a hit coordinate to the target queue.
-  # QD - Ensures strategic firing by focusing on neighboring cells after a hit.
-  # JB - Prioritizes adjacent cells to efficiently locate and sink ships.
-  def add_adjacent_cells_to_queue(coordinate)
-    row, col = coordinate[0], coordinate[1..-1].to_i
-    adjacent_cells = [
-      "#{row}#{col + 1}", # Right
-      "#{row}#{col - 1}", # Left
-      "#{(row.ord + 1).chr}#{col}", # Down
-      "#{(row.ord - 1).chr}#{col}"  # Up
-    ]
+# Define row array to manage rows more clearly
+ROWS = ("A".."D").to_a
 
-    adjacent_cells.each do |cell|
-      @target_queue << cell if valid_coordinate?(cell) && !@cells[cell].fired_upon?
-    end
+# Adds adjacent cells of a hit coordinate to the target queue.
+# QD - Ensures strategic firing by focusing on neighboring cells after a hit.
+# JB - Prioritizes adjacent cells to efficiently locate and sink ships.
+def add_adjacent_cells_to_queue(coordinate)
+  row, col = coordinate[0], coordinate[1..-1].to_i
+  
+  # Find the index of the current row
+  row_index = ROWS.index(row)
+  
+  # Get adjacent cells without using .ord and .chr
+  adjacent_cells = [
+    "#{row}#{col + 1}",               # Right
+    "#{row}#{col - 1}",               # Left
+    "#{ROWS[row_index + 1]}#{col}",   # Down
+    "#{ROWS[row_index - 1]}#{col}"    # Up
+  ]
+
+  # Only add valid, unfired-upon cells
+  adjacent_cells.each do |cell|  # Checks if the cell is a valid, unfired cell before adding it to the queue
+    @target_queue << cell if valid_coordinate?(cell) && !@cells[cell].fired_upon?
+  end
+end
+
+  # Ensures the coordinate is within the board’s boundaries.
+  def valid_coordinate?(coord)
+    @board.valid_coordinate?(coord)
   end
 end

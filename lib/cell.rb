@@ -11,7 +11,7 @@ class Cell
   def initialize(coordinate)
     @coordinate = coordinate
     @ship = nil
-    @fired_upon = false
+    @fired_upon = false # Tracks if the cell has been fired upon.
   end
 
     # QD Return if there is no ship
@@ -25,6 +25,7 @@ class Cell
   end
 
   # JB - fired_upon? method returns true if the cell has been fired upon, false otherwise.
+  # Marks the cell as fired upon and damages the ship if one is present.
   def fired_upon?
     @fired_upon
   end
