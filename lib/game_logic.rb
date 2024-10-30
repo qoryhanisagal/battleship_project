@@ -1,5 +1,5 @@
 # lib/game_logic.rb
-
+#Two Player Mode
 require_relative './board'
 require_relative './ship'
 require_relative './cell'
@@ -54,7 +54,7 @@ class GameLogic
       setup_two_player_game    # Handles two-player setup from TwoPlayerMode, including board and ships
       take_turns               # Starts the game in two-player mode
     when "q"
-      puts "Thank you for playing. Goodbye!"
+      puts "Sorry to see you Leave.Thank you for playing. Goodbye!"
       exit
     else
       puts "Invalid input. Please enter '1' for Single Player, '2' for Two Player, or 'q' to quit."
@@ -63,7 +63,7 @@ class GameLogic
   end
 
   #### SINGLE PLAYER SETUP ####
-  # Sets up the single-player game with board size, ship setup, and difficulty.
+  # JB - Sets up the single-player game with board size, ship setup, and difficulty.
   def setup_single_player_game
     set_board_size         # Set board dimensions
     set_ships              # Allow user to define ships
@@ -71,7 +71,7 @@ class GameLogic
   end
 
   #### TWO PLAYER SETUP ####
-  # Sets up the two-player game, typically from TwoPlayerMode module.
+  # QD - Sets up the two-player game, typically from TwoPlayerMode module.
   def setup_two_player_game
     set_board_size         # Both players will use the same board size
     set_ships              # Players define ships, or default ships can be set up for both players
@@ -116,12 +116,13 @@ class GameLogic
   # QD - Begins the game by setting up ship placements for both player and computer.
   # JB - Manages separate board setups, ensuring each player’s board is configured before gameplay.
   def play_game
-    puts "Let's get started!"
+    puts "Prepare for Battle!"
     place_computer_ships
     place_player_ships
     take_turn
   end
 
+  ### Random Ship Placement ###
   # Places ships for the computer on random, valid coordinates.
   # QD - Uses the valid_placement? method to ensure placements are correct.
   # JB - Randomizes ship placement to increase replayability.
@@ -171,7 +172,7 @@ class GameLogic
   end
 
   def player_turn
-    puts "Your turn! Here's the computer's board:"
+    puts "Your turn! Here's your opponent's board:"
     puts @computer_board.render(show_ships: false)
     puts "Enter the coordinate for your shot:"
     coordinate = gets.chomp.upcase
@@ -192,7 +193,7 @@ class GameLogic
   def computer_turn
     coordinate = @computer_player.make_move  # Calls the computer player to make its calculated move
     @player_board.cells[coordinate].fire_upon
-    puts "Computer fired on #{coordinate}."
+    puts "Opponent fired on #{coordinate}."
     puts feedback(@player_board.cells[coordinate])
   end
 
