@@ -1,3 +1,6 @@
+# Game Logic Code Setup Options
+
+``` ruby
 # lib/game_logic.rb
 
 require_relative './board'
@@ -46,7 +49,7 @@ class GameLogic
   
     case input
     when "p"
-      set_game_difficulty
+      select_difficulty
       play_game
     when "q"
       puts "Thank you for playing. Goodbye!"
@@ -57,13 +60,22 @@ class GameLogic
     end
   end
   
-  ### Set Difficulty for the Game ####
-  # QD - Prompts the player for difficulty and sets it on the ComputerPlayer instance.
-  # JB - Delegates difficulty management to DifficultyHandler through ComputerPlayer.
-  def set_game_difficulty
-    puts "Select Difficulty: Enter 1 for Calm Seas (Easy), 2 for Rough Waters (Normal), 3 for War Zone Waters (Medium), 4 for Deep Abyss (Hard)"
-    difficulty_choice = gets.chomp.to_i
-    @computer_player.set_difficulty(difficulty_choice)  # Uses DifficultyHandler to set difficulty in ComputerPlayer
+  ### Select Diificulty ####
+  
+  def select_difficulty
+    puts "Select Difficulty: Enter 1 for Easy, 2 for Medium, 3 for Hard"
+    difficulty = gets.chomp.to_i
+    case difficulty
+    when 1
+      @computer_player.difficulty = :easy
+    when 2
+      @computer_player.difficulty = :medium
+    when 3
+      @computer_player.difficulty = :hard
+    else
+      puts "Invalid choice. Defaulting to Medium."
+      @computer_player.difficulty = :medium
+    end
   end
 
   #### GAME SETUP ####
@@ -79,12 +91,15 @@ class GameLogic
   # Places ships for the computer on random, valid coordinates.
   # QD - Uses the valid_placement? method to ensure placements are correct.
   # JB - Randomizes ship placement to increase replayability.
+
+  ##### For Placing Computer Ships #####
+
   def place_computer_ships
     @ships.each do |ship|
       placed = false
       until placed
         coords = @computer_board.random_coordinates_for(ship)
-        if valid_placement?(ship, coords, @computer_board)
+        if valid_placement?(ship, coords, @computer_board)  # Pass board here
           @computer_board.place(ship, coords)
           placed = true
         end
@@ -95,6 +110,9 @@ class GameLogic
   # Allows the player to manually place ships on their board.
   # QD - Guides the player through ship placement, with validations to prevent invalid entries.
   # JB - Ensures ships are placed on valid coordinates, using placement feedback.
+
+   ##### For Placing Player Ships #####
+
   def place_player_ships
     puts "Now it's time to place your ships on the board!"
     @ships.each do |ship|
@@ -102,7 +120,7 @@ class GameLogic
       until valid
         puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces):"
         coords = gets.chomp.upcase.split
-        if valid_placement?(ship, coords, @player_board)
+        if valid_placement?(ship, coords, @player_board)  # Pass board here
           @player_board.place(ship, coords)
           valid = true
         else
@@ -119,14 +137,14 @@ class GameLogic
   def take_turn
     until game_over?
       player_turn
-      computer_turn unless game_over?
+      computer_turn unless game_over?  # Prevents extra computer turn if player wins
     end
     end_game
   end
 
   def player_turn
     puts "Your turn! Here's the computer's board:"
-    puts @computer_board.render(show_ships: false)
+    puts @computer_board.render(show_ships: false)  # Call render on @computer_board instance
     puts "Enter the coordinate for your shot:"
     coordinate = gets.chomp.upcase
   
@@ -139,16 +157,17 @@ class GameLogic
     end
   end
 
-  ##### For Computer's Turn #####
-  # Manages the computer’s turn using an intelligent guessing strategy.
-  # QD - Computer uses the GuessingStrategy module to make educated shots.
-  # JB - Implements targeted guessing based on previous hits for more realistic AI behavior.
-  def computer_turn
-    coordinate = @computer_player.make_move  # Calls the computer player to make its calculated move
-    @player_board.cells[coordinate].fire_upon
-    puts "Computer fired on #{coordinate}."
-    puts feedback(@player_board.cells[coordinate])
-  end
+##### For Computer's Turn#####
+
+# Manages the computer’s turn using an intelligent guessing strategy.
+# QD - Computer uses the GuessingStrategy module to make educated shots.
+# JB - Implements targeted guessing based on previous hits for more realistic AI behavior.
+def computer_turn
+  coordinate = @computer_player.make_move  # Calls the computer player to make its calculated move
+  @player_board.cells[coordinate].fire_upon
+  puts "Computer fired on #{coordinate}."
+  puts feedback(@player_board.cells[coordinate])
+end
 
   # Provides feedback based on the shot outcome (miss, hit, or sunk).
   # QD - Returns a message indicating the result of the player’s or computer’s shot.
@@ -163,14 +182,14 @@ class GameLogic
     end
   end
 
-  # Determines if all ships on the specified board have been sunk.
-  # QD - Verifies all cells with ships are sunk to check for a win condition.
-  # JB - Used in `game_over?` to assess if any player has won the game.
-  def all_ships_sunk?(board)
-    board.cells.values.all? do |cell|
-      cell.ship.nil? || cell.ship.sunk?
-    end
+# Determines if all ships on the specified board have been sunk.
+# QD - Verifies all cells with ships are sunk to check for a win condition.
+# JB - Used in `game_over?` to assess if any player has won the game.
+def all_ships_sunk?(board)
+  board.cells.values.all? do |cell|
+    cell.ship.nil? || cell.ship.sunk?
   end
+end
 
   #### WIN/LOSS CHECKS ####
   # Determines if all ships of one player are sunk, ending the game.
@@ -201,9 +220,10 @@ class GameLogic
     main_menu
   end
 end
+# Let's Get this Party Started!!
 
-# Start the game if this file is run directly
 if __FILE__ == $0
   game = GameLogic.new
   game.start_game
 end
+```
