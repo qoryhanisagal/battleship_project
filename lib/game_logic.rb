@@ -46,8 +46,10 @@ class GameLogic
   
     case input
     when "p"
-      set_game_difficulty
-      play_game
+      set_board_size      # Prompts the user to set the board size.
+      set_ships           # Prompts the user to set up the ships.
+      set_game_difficulty   # Allows the user to select the game difficulty.
+      play_game           # Starts the game after setup.
     when "q"
       puts "Thank you for playing. Goodbye!"
       exit
@@ -56,7 +58,33 @@ class GameLogic
       main_menu
     end
   end
-  
+
+  #### SET BOARD SIZE ####
+  # QD - Prompts the player to enter the desired board size.
+  # JB - Adjusts the board size for both player and computer based on input.
+  def set_board_size
+    puts "Enter the board size (e.g., 4 for a 4x4 board, or 6 for a 6x6 board):"
+    size = gets.chomp.to_i
+    @player_board = Board.new(size, size)
+    @computer_board = Board.new(size, size)
+  end
+
+  #### SET SHIPS ####
+  # QD - Allows players to define their own ships by entering names and lengths.
+  # JB - Creates custom ships based on player input for more personalized gameplay.
+  def set_ships
+    @ships = []
+    puts "Enter the number of ships:"
+    ship_count = gets.chomp.to_i
+    ship_count.times do |i|
+      puts "Enter the name of ship ##{i + 1}:"
+      name = gets.chomp
+      puts "Enter the length of #{name}:"
+      length = gets.chomp.to_i
+      @ships << Ship.new(name, length)
+    end
+  end
+
   ### Set Difficulty for the Game ####
   # QD - Prompts the player for difficulty and sets it on the ComputerPlayer instance.
   # JB - Delegates difficulty management to DifficultyHandler through ComputerPlayer.

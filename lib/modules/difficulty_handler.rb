@@ -50,8 +50,19 @@ module DifficultyHandler
     @target_queue.empty? ? random_guess : next_guess(@board)
   end
 
+  private
+  
   # Method for generating a random unfired coordinate
   def random_guess
     @board.random_unfired_coordinate
+  end
+
+  def advanced_guess
+    if @target_queue.empty?
+      random_guess
+    else
+      # Guess in a more focused way based on adjacent cells of previous hits
+      @target_queue.shift
+    end
   end
 end
