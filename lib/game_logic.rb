@@ -43,9 +43,10 @@ class GameLogic
   def main_menu
     puts "Enter p to play. Enter q to quit."
     input = gets.chomp.downcase
-
+  
     case input
     when "p"
+      select_difficulty
       play_game
     when "q"
       puts "Thank you for playing. Goodbye!"
@@ -53,6 +54,24 @@ class GameLogic
     else
       puts "Invalid input. Please enter 'p' to play or 'q' to quit."
       main_menu
+    end
+  end
+  
+  ### Select Diificulty ####
+  
+  def select_difficulty
+    puts "Select Difficulty: Enter 1 for Easy, 2 for Medium, 3 for Hard"
+    difficulty = gets.chomp.to_i
+    case difficulty
+    when 1
+      @computer_player.difficulty = :easy
+    when 2
+      @computer_player.difficulty = :medium
+    when 3
+      @computer_player.difficulty = :hard
+    else
+      puts "Invalid choice. Defaulting to Medium."
+      @computer_player.difficulty = :medium
     end
   end
 
@@ -90,6 +109,7 @@ class GameLogic
   # JB - Ensures ships are placed on valid coordinates, using placement feedback.
 
    ##### For Placing Player Ships #####
+
   def place_player_ships
     puts "Now it's time to place your ships on the board!"
     @ships.each do |ship|
@@ -119,16 +139,13 @@ class GameLogic
     end_game
   end
 
-  # Manages the player’s turn by allowing them to fire at the computer’s board.
-  # QD - Displays the computer's board state and takes player input for the shot.
-  # JB - Ensures valid coordinates are targeted and avoids repeated shots on the same cell.
   def player_turn
     puts "Your turn! Here's the computer's board:"
-    puts render(@computer_board, show_ships: false)
+    puts @computer_board.render(show_ships: false)  # Call render on @computer_board instance
     puts "Enter the coordinate for your shot:"
     coordinate = gets.chomp.upcase
-
-    if valid_coordinate?(coordinate, @computer_board) && !@computer_board.cells[coordinate].fired_upon?
+  
+    if @computer_board.valid_coordinate?(coordinate) && !@computer_board.cells[coordinate].fired_upon?
       @computer_board.cells[coordinate].fire_upon
       puts feedback(@computer_board.cells[coordinate])
     else
@@ -136,6 +153,8 @@ class GameLogic
       player_turn
     end
   end
+
+##### For Computer's Turn#####
 
 # Manages the computer’s turn using an intelligent guessing strategy.
 # QD - Computer uses the GuessingStrategy module to make educated shots.
@@ -159,6 +178,15 @@ end
       "Hit!"
     end
   end
+
+# Determines if all ships on the specified board have been sunk.
+# QD - Verifies all cells with ships are sunk to check for a win condition.
+# JB - Used in `game_over?` to assess if any player has won the game.
+def all_ships_sunk?(board)
+  board.cells.values.all? do |cell|
+    cell.ship.nil? || cell.ship.sunk?
+  end
+end
 
   #### WIN/LOSS CHECKS ####
   # Determines if all ships of one player are sunk, ending the game.

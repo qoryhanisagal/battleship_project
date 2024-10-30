@@ -19,12 +19,13 @@ module PlacementValidator
   # QD - Avoids overlap by examining each cell for an existing ship.
 
   def overlapping_ships?(coordinates, board)
-  # Checks for overlapping ships by accessing the correct cells on the board.
-  # QD - Use `board.cells` to access the cells directly from the passed-in board
-    coordinates.any? { |coord| board.cells[coord]&.ship }  
-    puts board.class  # This should output `Board`
+    coordinates.any? do |coord|
+      cell = board.cells[coord]
+      puts "Inspecting coordinate #{coord}, cell: #{cell}" if cell.nil?
+      cell&.ship  # Verifies the presence of a ship in each cell
+    end
   end
-
+  
   # Checks if coordinates are consecutive and align in a row or column.
   # QD - Validates that coordinates form a straight line, ensuring correct alignment.
   # JB - Confirms ships are placed in either a horizontal or vertical line.
