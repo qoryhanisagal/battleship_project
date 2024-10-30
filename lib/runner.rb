@@ -13,6 +13,8 @@ require_relative '../lib/board'
 game = GameLogic.new
 game.start_game
 
+
+## For Iterations 1-3
 # # The Battleship class manages the overall structure and flow of the game.
 # class Battleship
 #   attr_reader :player_board, :computer_board, :ships

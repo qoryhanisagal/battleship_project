@@ -1,5 +1,5 @@
 # lib/game_logic.rb
-# Two Player Mode
+# Initial Setup include Two Player Mode
 require_relative './board'
 require_relative './ship'
 require_relative './cell'
@@ -11,7 +11,6 @@ require_relative './computer_player'
 
 # QD - The GameLogic class manages the overall game flow, coordinating turns, placements, and win/loss checks.
 # JB - This class integrates separate modules for better modularity, including placement validation, rendering, and intelligent guessing.
-
 class GameLogic
   include PlacementValidator   # Manages ship placement validation
   include Renderer             # Manages board rendering for each turn
