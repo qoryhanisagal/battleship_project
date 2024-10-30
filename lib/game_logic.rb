@@ -6,6 +6,7 @@ require_relative './cell'
 require_relative './modules/placement_validator'
 require_relative './modules/renderer'
 require_relative './modules/guessing_strategy'
+require_relative './modules/two_player_mode'
 require_relative './computer_player'
 
 # QD - The GameLogic class manages the overall game flow, coordinating turns, placements, and win/loss checks.
@@ -15,6 +16,7 @@ class GameLogic
   include PlacementValidator   # Manages ship placement validation
   include Renderer             # Manages board rendering for each turn
   include GuessingStrategy     # Provides intelligent guessing for the computer’s moves
+  include TwoPlayerMode        # Provides options for Two Player Mode
 
   attr_reader :player_board, :computer_board, :computer_player, :ships, :winner
 
@@ -41,22 +43,38 @@ class GameLogic
   # QD - Provides options to start or quit the game.
   # JB - Takes input from the player to either begin the game or end the session.
   def main_menu
-    puts "Enter p to play. Enter q to quit."
+    puts "Choose game mode: Enter 1 for Single Player, 2 for Two Player, or 'q' to quit."
     input = gets.chomp.downcase
-  
+
     case input
-    when "p"
-      set_board_size      # Prompts the user to set the board size.
-      set_ships           # Prompts the user to set up the ships.
-      set_game_difficulty   # Allows the user to select the game difficulty.
-      play_game           # Starts the game after setup.
+    when "1"
+      setup_single_player_game # Handles single-player setup, including board size, ships, and difficulty
+      play_game                # Starts the game in single-player mode
+    when "2"
+      setup_two_player_game    # Handles two-player setup from TwoPlayerMode, including board and ships
+      take_turns               # Starts the game in two-player mode
     when "q"
       puts "Thank you for playing. Goodbye!"
       exit
     else
-      puts "Invalid input. Please enter 'p' to play or 'q' to quit."
+      puts "Invalid input. Please enter '1' for Single Player, '2' for Two Player, or 'q' to quit."
       main_menu
     end
+  end
+
+  #### SINGLE PLAYER SETUP ####
+  # Sets up the single-player game with board size, ship setup, and difficulty.
+  def setup_single_player_game
+    set_board_size         # Set board dimensions
+    set_ships              # Allow user to define ships
+    set_game_difficulty    # Set game difficulty level
+  end
+
+  #### TWO PLAYER SETUP ####
+  # Sets up the two-player game, typically from TwoPlayerMode module.
+  def setup_two_player_game
+    set_board_size         # Both players will use the same board size
+    set_ships              # Players define ships, or default ships can be set up for both players
   end
 
   #### SET BOARD SIZE ####
