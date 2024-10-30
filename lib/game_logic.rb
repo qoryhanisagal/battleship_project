@@ -31,6 +31,7 @@ class GameLogic
     @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
     @winner = nil
     @two_player_mode = false # Changes based on game mode
+    @player_board = @player1_board  # Makes `@player_board` available for single-player- mode
   end
 
   #### START GAME ####
@@ -41,6 +42,25 @@ class GameLogic
     main_menu
   end
 
+    #### GAME SETUP ####
+  # QD - Begins the game by setting up ship placements for both player and computer.
+  # JB - Manages separate board setups, ensuring each player’s board is configured before gameplay.
+  def play_game
+    puts "Prepare for Battle!"
+    place_computer_ships
+    place_player_ships
+    take_turn
+  end
+
+    ### Set Difficulty for the Game ####
+  # QD - Prompts the player for difficulty and sets it on the ComputerPlayer instance.
+  # JB - Delegates difficulty management to DifficultyHandler through ComputerPlayer.
+  def set_game_difficulty
+    puts "Select Difficulty: Enter 1 for Calm Seas (Easy), 2 for Rough Waters (Normal), 3 for War Zone Waters (Medium), 4 for Deep Abyss (Hard)"
+    difficulty_choice = gets.chomp.to_i
+    @computer_player.set_difficulty(difficulty_choice)  # Uses DifficultyHandler to set difficulty in ComputerPlayer
+  end
+  
   #### MAIN MENU ####
   # QD - Provides options to start or quit the game.
   # JB - Takes input from the player to either begin the game or end the session.
@@ -54,11 +74,12 @@ class GameLogic
       setup_single_player_game                # Starts the game in single-player mode
       take_turn
     when "2"
-      @two_player_mode = true   # Handles two-player setup from TwoPlayerMode, including board and ships
-      setup_two_player_game              # Starts the game in two-player mode
-      take_turn(@player1_board, @player2_board) # Pass both boards for two-player mode
+      # Handles two-player setup from TwoPlayerMode, including board and ships
+      @two_player_mode = true   
+      setup_two_player_game     # Calls method from TwoPlayerMode to set up two-player mode
+      take_turns                # Calls method from TwoPlayerMode to handle turns for two players
     when "q"
-      puts "Sorry to see you Leave.Thank you for playing. Goodbye!"
+      puts "Sorry to see you Leave. Thank you for playing. Goodbye!"
       exit
     else
       puts "Invalid input. Please enter '1' for Single Player, '2' for Two Player, or 'q' to quit."
@@ -73,14 +94,16 @@ def setup_single_player_game
   set_board_size         # Set board dimensions
   set_ships              # Allow user to define ships
   
-  # Adds back the prompt for difficulty level in single-player mode
+  @player_board = player1_board 
+
+  # Prompts difficulty level for single-player
   puts "Select Difficulty: Enter 1 for Calm Seas (Easy), 2 for Rough Waters (Normal), 3 for War Zone Waters (Medium), 4 for Deep Abyss (Hard)"
   set_game_difficulty    # Set game difficulty level
 
   puts "Prepare for Battle!"
   place_computer_ships   # Places ships for the computer
-  place_player_ships     # Allows player to place ships
-  take_turn(@player_board, @computer_board)  # Begins gameplay loop
+  place_player_ships(@player_board)     # Allows player to place ships
+  take_turn # Begins gameplay loop
 end
 
 #### TWO PLAYER SETUP ####
@@ -106,6 +129,7 @@ end
     @player2_board = Board.new(size, size)
     @computer_board = Board.new(size, size)
   end
+
   #### SET SHIPS ####
   # Allows players to define their own ships by entering names and lengths.
   def set_ships
@@ -132,45 +156,9 @@ end
 
       @ships << Ship.new(name, length)
     end
-  end  # Ensure this end corresponds to the set_ships method
-
-#### END OF OTHER METHODS ####
-  ### Set Difficulty for the Game ####
-  # QD - Prompts the player for difficulty and sets it on the ComputerPlayer instance.
-  # JB - Delegates difficulty management to DifficultyHandler through ComputerPlayer.
-  def set_game_difficulty
-    puts "Select Difficulty: Enter 1 for Calm Seas (Easy), 2 for Rough Waters (Normal), 3 for War Zone Waters (Medium), 4 for Deep Abyss (Hard)"
-    difficulty_choice = gets.chomp.to_i
-    @computer_player.set_difficulty(difficulty_choice)  # Uses DifficultyHandler to set difficulty in ComputerPlayer
   end
 
-  #### GAME SETUP ####
-  # QD - Begins the game by setting up ship placements for both player and computer.
-  # JB - Manages separate board setups, ensuring each player’s board is configured before gameplay.
-  def play_game
-    puts "Prepare for Battle!"
-    place_computer_ships
-    place_player_ships
-    take_turn
-  end
-
-  ### Random Ship Placement ###
-  # Places ships for the computer on random, valid coordinates.
-  # QD - Uses the valid_placement? method to ensure placements are correct.
-  # JB - Randomizes ship placement to increase replayability.
-  def place_computer_ships
-    @ships.each do |ship|
-      placed = false
-      until placed
-        coords = @computer_board.random_coordinates_for(ship)
-        if valid_placement?(ship, coords, @computer_board)
-          @computer_board.place(ship, coords)
-          placed = true
-        end
-      end
-    end
-  end
-
+  ### Ship Place in the Board ####
   # Allows the player to manually place ships on their board.
   # QD - Guides the player through ship placement, with validations to prevent invalid entries.
   # JB - Ensures ships are placed on valid coordinates, using placement feedback.
@@ -191,13 +179,29 @@ end
     end
   end
 
+  ### Random Ship Placement ###
+  # Places ships for the computer on random, valid coordinates.
+  # QD - Uses the valid_placement? method to ensure placements are correct.
+  # JB - Randomizes ship placement to increase replayability.
+  def place_computer_ships
+    @ships.each do |ship|
+      placed = false
+      until placed
+        coords = @computer_board.random_coordinates_for(ship)
+        if valid_placement?(ship, coords, @computer_board)
+          @computer_board.place(ship, coords)
+          placed = true
+        end
+      end
+    end
+  end
+
   #### GAMEPLAY ####
+  #### TAKE TURNS ####
   # Alternates turns between the player, computer, ot two player until one player's ships are sunk.
   # QD - Manages turn-based gameplay, switching between player and computer actions.
   # JB - Ends gameplay loop when win/loss conditions are met.
-
-  #### TAKE TURN ####
-  # Alternates turns based on the selected game mode.
+  # QD - Alternates turns based on the selected game mode.
   def take_turn
     if @two_player_mode
       # Two-player mode
@@ -245,9 +249,9 @@ end
   # QD - Executes computer's move with calculated guessing strategy for a realistic AI.
   # JB - Uses DifficultyHandler to dynamically select a move based on set difficulty.
   def computer_turn
-  puts "Computer's turn - choosing move based on difficulty..."  # Debugging statement
+  puts "Computer's turn - choosing move based on difficulty..." # JB - Debugging statement
   coordinate = @computer_player.make_move  # Calls the computer player to make its calculated move
-  puts "Computer chose coordinate #{coordinate}"  # Confirm the selected coordinate
+  puts "Computer chose coordinate #{coordinate}"  # QD - Confirm the selected coordinate
   @player_board.cells[coordinate].fire_upon
   puts "Opponent fired on #{coordinate}."
   puts feedback(@player_board.cells[coordinate])
@@ -276,10 +280,12 @@ end
     end
   end
 
-#### GANE OVER CHECK ####
+#### GAME OVER CHECK ####
   # Determines if all ships of one player are sunk, ending the game.
   # QD - Sets @winner based on which board has all ships sunk.
   # JB - Manages win/loss conditions by verifying the state of each board’s ships.
+  # QD - Verifies all cells with ships are sunk to check for a win condition.
+  # JB - Used in `game_over?` to assess if any player has won the game.
   def game_over?
     if @two_player_mode
       if all_ships_sunk?(@player1_board)
@@ -317,6 +323,7 @@ end
     end
     main_menu
   end
+end
 
 # Start the game if this file is run directly
 if __FILE__ == $0
