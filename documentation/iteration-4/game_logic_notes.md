@@ -468,3 +468,96 @@ if __FILE__ == $0
   game.start_game
 end
 ```
+# Understanding the  `length_input.match?(/^\d+$/)`
+#### Purpose of length_input.match?(/^\d+$/) in Set Ships (Iteration 4)
+ Problem: 
+#### SET SHIPS ####
+# QD - Allows players to define their own ships by entering names and lengths.
+# JB - Ensures ships are created with valid lengths by adding integer validation for length input.
+``` ruby
+def set_ships
+  # Initialize an empty array to store ship objects created by the player
+  @ships = []
+  
+  # Prompt the player to enter the number of ships they would like to create
+  puts "Enter the number of ships:"
+  ship_count = gets.chomp.to_i  # Converts input to an integer to determine the loop count
+  
+  # Loop for each ship to prompt for ship details (name and length)
+  ship_count.times do |i|
+    # Ask for the name of the ship
+    puts "Enter the name of ship ##{i + 1}:"
+    name = gets.chomp  # Stores ship name input from the player
+
+    # Length validation loop
+    # Initializes length as nil, setting up to validate it in the next steps
+    length = nil
+    loop do
+      # Prompt the player to enter the length of the ship
+      puts "Enter the length of #{name}:"
+      length_input = gets.chomp  # Temporarily stores the input as a string for validation
+      
+      # Check if the input is a valid positive integer
+      if length_input.match?(/^\d+$/)
+        # Converts the validated input to an integer and assigns it to length
+        length = length_input.to_i
+        break  # Exits the loop once a valid length is entered
+      else
+        # Provides feedback if the input is invalid, asking for integer-only input
+        puts "Invalid length. Please enter an integer value."
+      end
+    end
+
+    # After validation, create a new Ship object and add it to the @ships array
+    @ships << Ship.new(name, length)
+  end
+end
+```
+This line is a way to check that the player’s input for the ship length is:
+
+1.	A **positive whole number** (no decimals or negative numbers).
+2.	Contains **only digits** (no letters or special characters).
+
+#### Breaking Down the Regular Expression /^\d+$/
+**Per VS Code Extension and Ruby Docs**
+
+Regular expressions (regex) can be intimidating at first, but they’re just patterns used to match text. Here’s what each part of /^\d+$/ means:
+
+- ^: This symbol means “start of the string.” It ensures we’re matching from the very beginning of the input.
+- \d: This represents “any digit” (0 through 9). In regex, \d is shorthand for any digit.
+- +: This means “one or more” of the previous item. So \d+ means “one or more digits.”
+- $: This means “end of the string,” ensuring we’re matching up to the end.
+
+#### Putting it together:
+
+- /^\d+$/ matches a string that:
+- Starts (^) with one or more digits (\d+).
+- Ends with those digits ($), with no extra characters before or after.
+
+In simpler terms, it’s a way to confirm that the input is only a whole number, like 2, 15, or 123.
+
+## In Qorys' brain: 
+
+### Party Rules (or, “What the Regex Checks For”)
+
+1.	Only people who arrive alone (one uninterrupted group) are allowed in.
+2.	Each person must be a positive whole number (like 2, 15, or 123). No decimals, negative numbers, or letters are allowed.
+
+### Breaking Down the Criteria
+
+Let’s see how the bouncer applies each rule.
+
+- ^ **(The “Start” Rule):**
+The bouncer checks each guest as they start arriving, making sure they come in a single group with no gaps.
+- \d **(The “Only Digits” Rule):**
+The bouncer only allows people who are pure digits (like 0, 1, 2, 3…9) through the door. If someone tries to get in with letters, symbols, or spaces, they’re turned away.
+- + **(The “One or More Digits” Rule):**
+The bouncer expects to see at least one digit—so empty strings can’t get in. It’s okay if more than one digit arrives, but it has to be at least one.
+- $ **(The “End” Rule):**
+Once the person is inside, the bouncer ensures no extra characters follow them. If anyone tries to sneak in with extra stuff tacked onto the end, they’re stopped.
+
+**So, What’s the Result?**
+
+With all these checks, only guests who are positive whole numbers—like 2, 15, or 123—make it past the bouncer. People with letters ("abc"), negative signs ("-4"), or spaces ("12 34") are turned away, as they don’t meet the strict criteria of starting and ending as digits only.
+
+This is why the code length_input.match?(/^\d+$/) ensures we’re only letting valid, positive, whole numbers through!
