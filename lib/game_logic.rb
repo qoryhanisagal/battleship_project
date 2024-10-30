@@ -1,5 +1,5 @@
 # lib/game_logic.rb
-#Two Player Mode
+# Two Player Mode
 require_relative './board'
 require_relative './ship'
 require_relative './cell'
@@ -24,11 +24,13 @@ class GameLogic
   # QD - Sets up player and computer boards and default ships, preparing game state.
   # JB - Ensures initial setup is isolated, making it easier to modify board size and ship types if needed.
   def initialize
-    @player_board = Board.new
+    @player1_board = Board.new
+    @player2_board = Board.new
     @computer_board = Board.new
     @computer_player = ComputerPlayer.new(@computer_board)  # Instantiate the ComputerPlayer with the computer board
     @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
     @winner = nil
+    @two_player_mode = false # Changes based on game mode
   end
 
   #### START GAME ####
@@ -48,11 +50,13 @@ class GameLogic
 
     case input
     when "1"
-      setup_single_player_game # Handles single-player setup, including board size, ships, and difficulty
-      play_game                # Starts the game in single-player mode
+      @two_player_mode = false # Handles single-player setup, including board size, ships, and difficulty
+      setup_single_player_game                # Starts the game in single-player mode
+      take_turn
     when "2"
-      setup_two_player_game    # Handles two-player setup from TwoPlayerMode, including board and ships
-      take_turns               # Starts the game in two-player mode
+      @two_player_mode = true   # Handles two-player setup from TwoPlayerMode, including board and ships
+      setup_two_player_game              # Starts the game in two-player mode
+      take_turn(@player1_board, @player2_board) # Pass both boards for two-player mode
     when "q"
       puts "Sorry to see you Leave.Thank you for playing. Goodbye!"
       exit
@@ -62,20 +66,35 @@ class GameLogic
     end
   end
 
-  #### SINGLE PLAYER SETUP ####
-  # JB - Sets up the single-player game with board size, ship setup, and difficulty.
-  def setup_single_player_game
-    set_board_size         # Set board dimensions
-    set_ships              # Allow user to define ships
-    set_game_difficulty    # Set game difficulty level
-  end
+#### SINGLE PLAYER SETUP ####
+# Sets up the single-player game with board size, ship setup, and difficulty.
+def setup_single_player_game
+  puts "You have selected Single Player mode."
+  set_board_size         # Set board dimensions
+  set_ships              # Allow user to define ships
+  
+  # Adds back the prompt for difficulty level in single-player mode
+  puts "Select Difficulty: Enter 1 for Calm Seas (Easy), 2 for Rough Waters (Normal), 3 for War Zone Waters (Medium), 4 for Deep Abyss (Hard)"
+  set_game_difficulty    # Set game difficulty level
 
-  #### TWO PLAYER SETUP ####
-  # QD - Sets up the two-player game, typically from TwoPlayerMode module.
-  def setup_two_player_game
-    set_board_size         # Both players will use the same board size
-    set_ships              # Players define ships, or default ships can be set up for both players
-  end
+  puts "Prepare for Battle!"
+  place_computer_ships   # Places ships for the computer
+  place_player_ships     # Allows player to place ships
+  take_turn(@player_board, @computer_board)  # Begins gameplay loop
+end
+
+#### TWO PLAYER SETUP ####
+# Sets up the two-player game, typically from TwoPlayerMode module.
+def setup_two_player_game
+  puts "You have selected Two Player mode."
+  set_board_size         # Both players will use the same board size
+  set_ships              # Players define ships, or default ships can be set up for both players
+  
+  puts "Players, prepare for battle!"
+  place_player_ships     # Prompts each player to place ships
+
+  take_turns             # Starts the turn loop for two-player mode
+end
 
   #### SET BOARD SIZE ####
   # QD - Prompts the player to enter the desired board size.
@@ -83,26 +102,39 @@ class GameLogic
   def set_board_size
     puts "Enter the board size (e.g., 4 for a 4x4 board, or 6 for a 6x6 board):"
     size = gets.chomp.to_i
-    @player_board = Board.new(size, size)
+    @player1_board = Board.new(size, size)
+    @player2_board = Board.new(size, size)
     @computer_board = Board.new(size, size)
   end
-
   #### SET SHIPS ####
-  # QD - Allows players to define their own ships by entering names and lengths.
-  # JB - Creates custom ships based on player input for more personalized gameplay.
+  # Allows players to define their own ships by entering names and lengths.
   def set_ships
     @ships = []
     puts "Enter the number of ships:"
     ship_count = gets.chomp.to_i
+
     ship_count.times do |i|
       puts "Enter the name of ship ##{i + 1}:"
       name = gets.chomp
-      puts "Enter the length of #{name}:"
-      length = gets.chomp.to_i
+
+      # Validates that the entered length is an integer
+      length = nil
+      loop do
+        puts "Enter the length of #{name}:"
+        length_input = gets.chomp
+        if length_input.match?(/^\d+$/)  # Checks if input is a positive integer
+          length = length_input.to_i
+          break
+        else
+          puts "Invalid length. Please enter an integer value."
+        end
+      end
+
       @ships << Ship.new(name, length)
     end
-  end
+  end  # Ensure this end corresponds to the set_ships method
 
+#### END OF OTHER METHODS ####
   ### Set Difficulty for the Game ####
   # QD - Prompts the player for difficulty and sets it on the ComputerPlayer instance.
   # JB - Delegates difficulty management to DifficultyHandler through ComputerPlayer.
@@ -149,8 +181,8 @@ class GameLogic
       until valid
         puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces):"
         coords = gets.chomp.upcase.split
-        if valid_placement?(ship, coords, @player_board)
-          @player_board.place(ship, coords)
+        if valid_placement?(ship, coords, @player1_board)
+          @player1_board.place(ship, coords)
           valid = true
         else
           puts "Those coordinates are invalid. Please try again."
@@ -160,43 +192,67 @@ class GameLogic
   end
 
   #### GAMEPLAY ####
-  # Alternates turns between the player and computer until one player's ships are sunk.
+  # Alternates turns between the player, computer, ot two player until one player's ships are sunk.
   # QD - Manages turn-based gameplay, switching between player and computer actions.
   # JB - Ends gameplay loop when win/loss conditions are met.
+
+  #### TAKE TURN ####
+  # Alternates turns based on the selected game mode.
   def take_turn
-    until game_over?
-      player_turn
-      computer_turn unless game_over?
+    if @two_player_mode
+      # Two-player mode
+      until game_over?
+        puts "Player 1's Turn:"
+        player_turn(@player1_board, @player2_board) # Player 1's turn
+        break if game_over?
+
+        puts "Player 2's Turn:"
+        player_turn(@player2_board, @player1_board)# Player 2's turn
+        break if game_over?
+      end
+    else
+      # Single-player mode
+      until game_over?
+        player_turn(@player_board, @computer_board) # Single player's turn
+        computer_turn unless game_over?
+      end
     end
     end_game
   end
 
-  def player_turn
-    puts "Your turn! Here's your opponent's board:"
-    puts @computer_board.render(show_ships: false)
-    puts "Enter the coordinate for your shot:"
-    coordinate = gets.chomp.upcase
-  
-    if @computer_board.valid_coordinate?(coordinate) && !@computer_board.cells[coordinate].fired_upon?
-      @computer_board.cells[coordinate].fire_upon
-      puts feedback(@computer_board.cells[coordinate])
-    else
-      puts "Invalid coordinate or already fired upon. Try again."
-      player_turn
-    end
-  end
+#### PLAYER TURN (Used in Both Modes) ####
+def player_turn(player_board, opponent_board)
+  # Determine if it's Player 1 or Player 2's turn in Two Player Mode
+  player = player_board == @player1_board ? "Player 1" : "Player 2"
+  puts "#{player}'s turn! Here's the opponent's board:"
 
-  ##### For Computer's Turn #####
-  # Manages the computer’s turn using an intelligent guessing strategy.
-  # QD - Computer uses the GuessingStrategy module to make educated shots.
-  # JB - Implements targeted guessing based on previous hits for more realistic AI behavior.
+  # Render the opponent's board without showing ships
+  puts opponent_board.render(show_ships: false)
+  puts "Enter the coordinate for your shot:"
+  coordinate = gets.chomp.upcase
+
+  # Check if the coordinate is valid and has not been fired upon
+  if opponent_board.valid_coordinate?(coordinate) && !opponent_board.cells[coordinate].fired_upon?
+    opponent_board.cells[coordinate].fire_upon
+    puts feedback(opponent_board.cells[coordinate])
+  else
+    puts "Invalid coordinate or already fired upon. Try again."
+    player_turn(player_board, opponent_board) # Recursive call for retry
+  end
+end
+  #### COMPUTER TURN (Single Player Only) ####
+  # Manages the computer’s turn, using intelligent guessing based on difficulty.
+  # QD - Executes computer's move with calculated guessing strategy for a realistic AI.
+  # JB - Uses DifficultyHandler to dynamically select a move based on set difficulty.
   def computer_turn
-    coordinate = @computer_player.make_move  # Calls the computer player to make its calculated move
-    @player_board.cells[coordinate].fire_upon
-    puts "Opponent fired on #{coordinate}."
-    puts feedback(@player_board.cells[coordinate])
+  puts "Computer's turn - choosing move based on difficulty..."  # Debugging statement
+  coordinate = @computer_player.make_move  # Calls the computer player to make its calculated move
+  puts "Computer chose coordinate #{coordinate}"  # Confirm the selected coordinate
+  @player_board.cells[coordinate].fire_upon
+  puts "Opponent fired on #{coordinate}."
+  puts feedback(@player_board.cells[coordinate])
   end
-
+  
   # Provides feedback based on the shot outcome (miss, hit, or sunk).
   # QD - Returns a message indicating the result of the player’s or computer’s shot.
   # JB - Differentiates between hits, misses, and sunk ships to inform the player accurately.
@@ -210,6 +266,7 @@ class GameLogic
     end
   end
 
+  #### WIN/LOSS CHECKS ####
   # Determines if all ships on the specified board have been sunk.
   # QD - Verifies all cells with ships are sunk to check for a win condition.
   # JB - Used in `game_over?` to assess if any player has won the game.
@@ -219,35 +276,47 @@ class GameLogic
     end
   end
 
-  #### WIN/LOSS CHECKS ####
+#### GANE OVER CHECK ####
   # Determines if all ships of one player are sunk, ending the game.
   # QD - Sets @winner based on which board has all ships sunk.
   # JB - Manages win/loss conditions by verifying the state of each board’s ships.
   def game_over?
-    if all_ships_sunk?(@computer_board)
-      @winner = "player"
-      true
-    elsif all_ships_sunk?(@player_board)
-      @winner = "computer"
-      true
+    if @two_player_mode
+      if all_ships_sunk?(@player1_board)
+        @winner = "Player 2"
+        true
+      elsif all_ships_sunk?(@player2_board)
+        @winner = "Player 1"
+        true
+      else
+        false
+      end
     else
-      false
+      # Single-player mode checks
+      if all_ships_sunk?(@computer_board)
+        @winner = "player"
+        true
+      elsif all_ships_sunk?(@player_board)
+        @winner = "computer"
+        true
+      else
+        false
+      end
     end
   end
-
   #### END GAME ####
-  # Ends the game and announces the winner.
-  # QD - Displays the final game result and returns to the main menu.
-  # JB - Concludes the game loop and resets for potential new games.
   def end_game
-    if @winner == "player"
-      puts "Congratulations, you won!"
-    elsif @winner == "computer"
-      puts "You lost! The computer won!"
+    if @two_player_mode
+      puts "Congratulations, #{@winner} wins!"
+    else
+      if @winner == "player"
+        puts "Congratulations, you won!"
+      elsif @winner == "computer"
+        puts "You lost! The computer won!"
+      end
     end
     main_menu
   end
-end
 
 # Start the game if this file is run directly
 if __FILE__ == $0
