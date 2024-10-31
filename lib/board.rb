@@ -27,12 +27,21 @@ end
 # QD - Populates @cells hash using letters for rows and numbers for columns.
 # JB - Ensures every cell has a unique coordinate based on board size.
 def create_cells
-  ("A"..("A".ord + @height - 1).chr).each do |letter|
-    (1..@width).each do |number|
-      coord = "#{letter}#{number}"
-      @cells[coord] = Cell.new(coord)
-    end
+  # Generate rows based on ASCII values, ensuring height is treated as an integer
+  last_row_letter = (64 + @height.to_i).chr
+  rows = ("A"..last_row_letter).to_a
+
+  # Create cells by combining rows with columns based on width
+  coordinates = rows.flat_map do |row|
+    (1..@width).map { |col| "#{row}#{col}" }
   end
+
+  # Populate @cells with each coordinate as a key and a new Cell instance as the value
+  @cells = coordinates.map { |coord| [coord, Cell.new(coord)] }.to_h
+end
+
+  # Populate @cells with Cell instances for each coordinate
+  @cells = coordinates.map { |coord| [coord, Cell.new(coord)] }.to_h
 end
 
   # Delegates to PlacementValidator module for placement validation.
@@ -91,7 +100,6 @@ end
   
       break if coordinates.all? { |coord| valid_coordinate?(coord) } && valid_placement?(ship, coordinates)
     end
-      # puts " Generated coordinates for #{ship.name}: # {coordinates}"
     coordinates
   end
 
