@@ -11,10 +11,10 @@ module TwoPlayerMode
 
   def take_turns
     loop do
-      take_turn(@player1, @player2)
+      player_take_turn(@player1, @player2)
       break if @player2.all_ships_sunk?
 
-      take_turn(@player2, @player1)
+      player_take_turn(@player2, @player1)
       break if @player1.all_ships_sunk?
     end
     declare_winner
@@ -27,7 +27,7 @@ module TwoPlayerMode
     # Logic for setting up ships for each player
   end
 
-  def take_turn(player, opponent)
+  def player_take_turn(player, opponent)
     puts "#{player.name}'s turn!"
     display_boards(player, opponent)
 

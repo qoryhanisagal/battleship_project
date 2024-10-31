@@ -8,6 +8,7 @@ require_relative './modules/renderer'
 require_relative './modules/guessing_strategy'
 require_relative './modules/two_player_mode'
 require_relative './computer_player'
+require_relative './lib/player.rb'
 
 # QD - The GameLogic class manages the overall game flow, coordinating turns, placements, and win/loss checks.
 # JB - This class integrates separate modules for better modularity, including placement validation, rendering, and intelligent guessing.
@@ -39,16 +40,6 @@ class GameLogic
   def start_game
     puts "Welcome to BATTLESHIP!"
     main_menu
-  end
-
-    #### GAME SETUP ####
-  # QD - Begins the game by setting up ship placements for both player and computer.
-  # JB - Manages separate board setups, ensuring each player’s board is configured before gameplay.
-  def play_game
-    puts "Prepare for Battle!"
-    place_computer_ships
-    place_player_ships
-    take_turn
   end
 
     ### Set Difficulty for the Game ####
@@ -86,6 +77,16 @@ class GameLogic
     end
   end
 
+    #### GAME SETUP ####
+  # QD - Begins the game by setting up ship placements for both player and computer.
+  # JB - Manages separate board setups, ensuring each player’s board is configured before gameplay.
+  def play_game
+    puts "Prepare for Battle!"
+    place_computer_ships
+    place_player_ships(@player1_board) # Pass player 1's board for single-player mode
+    take_turn
+  end
+
 #### SINGLE PLAYER SETUP ####
 # Sets up the single-player game with board size, ship setup, and difficulty.
 def setup_single_player_game
@@ -106,14 +107,19 @@ def setup_single_player_game
 end
 
 #### TWO PLAYER SETUP ####
-# Sets up the two-player game, typically from TwoPlayerMode module.
+# Sets up the two-player game from TwoPlayerMode module.
 def setup_two_player_game
   puts "You have selected Two Player mode."
   set_board_size         # Both players will use the same board size
+  puts "Player 1, Define your ships"
   set_ships              # Players define ships, or default ships can be set up for both players
   
+  puts "Player 2, Define your ships"
+  set_ships_for_player2  # Calls methid to so Player to can define their ships"
+
   puts "Players, prepare for battle!"
-  place_player_ships     # Prompts each player to place ships
+  place_player_ships(@player1_board, "Player 1", @ships)     # Prompts each player to place ships
+  place_player_ships(@player2_board, "Player 2", @ships_player2)
 
   take_turns             # Starts the turn loop for two-player mode
 end
@@ -134,9 +140,9 @@ end
   def set_ships
     @ships = []
     puts "Enter the number of ships:"
-    ship_count = gets.chomp.to_i
+    @num_ships = gets.chomp.to_i # Set ships number for both players
 
-    ship_count.times do |i|
+    @num_ships.times do |i|
       puts "Enter the name of ship ##{i + 1}:"
       name = gets.chomp
 
@@ -157,19 +163,44 @@ end
     end
   end
 
+  #### SET SHIPS FOR PLAYER 2 ####
+  # Allows Player 2 to define their own ships.
+  def set_ships_for_player2
+    @ships_player2 = []
+    (1..@num_ships).each do |i|
+      puts "Enter the name of ship ##{i} for Player 2:"
+      name = gets.chomp
+
+      # Validates that the entered length is an integer
+      length = nil
+      loop do
+        puts "Enter the length of #{name}:"
+        length_input = gets.chomp
+        if length_input.match?(/^\d+$/)  # Checks if input is a positive integer
+          length = length_input.to_i
+          break
+        else
+          puts "Invalid length. Please enter an integer value."
+        end
+      end
+      @ships_player2 << Ship.new(name, length)
+    end
+  end
+
   ### Ship Place in the Board ####
   # Allows the player to manually place ships on their board.
+  # 2PLY Mode: # Allows each player to place their ships on their board.
   # QD - Guides the player through ship placement, with validations to prevent invalid entries.
   # JB - Ensures ships are placed on valid coordinates, using placement feedback.
-  def place_player_ships
-    puts "Now it's time to place your ships on the board!"
-    @ships.each do |ship|
+  def place_player_ships(board, player_name, ships)
+    puts "#{player_name}, Now it's time to place your ships on the board!"
+    ships.each do |ship|
       valid = false
       until valid
-        puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces):"
+        puts "#{player_name}, Enter the coordinates for the #{ship.name} (#{ship.length} spaces):"
         coords = gets.chomp.upcase.split
-        if valid_placement?(ship, coords, @player1_board)
-          @player1_board.place(ship, coords)
+        if valid_placement?(ship, coords,board)
+         board.place(ship, coords)
           valid = true
         else
           puts "Those coordinates are invalid. Please try again."
@@ -256,6 +287,7 @@ end
   puts feedback(@player_board.cells[coordinate])
   end
   
+  #### FEEDBACK METHOD ####
   # Provides feedback based on the shot outcome (miss, hit, or sunk).
   # QD - Returns a message indicating the result of the player’s or computer’s shot.
   # JB - Differentiates between hits, misses, and sunk ships to inform the player accurately.
