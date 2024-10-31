@@ -17,6 +17,7 @@ class Battleship
   # QD - Starts the game with a welcome message and main menu.
   def start_game
     puts "Welcome to BATTLESHIP!"
+    puts "~*~*~*~*~*~*~"
     main_menu
   end
 
@@ -28,8 +29,10 @@ class Battleship
 
     case input
     when "p"
+      puts "~*~*~*~*~*~*~"
       play_game
     when "q"
+      puts "~*~*~*~*~*~*~"
       puts "Thank you for playing. Goodbye!"
       exit
     else
@@ -42,6 +45,9 @@ class Battleship
   # Sets up the game by placing ships for both computer and player.
   def play_game
     puts "Let's get started!"
+    puts "~*~*~*~*~*~*~"
+    puts "You will be playing a miniature version of Battleship on a 4x4 grid."
+    puts "~*~*~*~*~*~*~"
     place_computer_ships
     place_player_ships
   end
@@ -52,18 +58,25 @@ class Battleship
       placed = false
       until placed
         coords = @computer_board.random_coordinates_for(ship)  # Random coordinates
-        puts "Generated coordinates for #{ship.name}: #{coords.join(', ')}" # Log generated coordinates
         if @computer_board.valid_placement?(ship, coords)
           @computer_board.place(ship, coords)
           placed = true
         end
       end
     end
+    puts "Computer board has been created." # Log generated coordinates BUT do not show player
+    puts "~*~*~*~*~*~*~"
   end
 
   # Guides the player through placing their ships on the board.
   def place_player_ships
+    puts "SHIP PLACEMENT RULES:" #to avoid 'invalid coordinate detected' message
+    puts "You are given a Cruiser, which is 3 spaces, and a Submarine, which is 2 spaces."
+    puts "Enter your coordinates in the format A1 A2 A3 etc-- no commas!"
+    puts "Coordinates must touch vertically or horizontally. No diagonals!"
+    puts "~*~*~*~*~*~*~"
     puts "Now it's time to place your ships on the board!"
+
     @ships.each do |ship|
       valid = false
       until valid
@@ -72,11 +85,18 @@ class Battleship
         if @player_board.valid_placement?(ship, coords)
           @player_board.place(ship, coords)
           valid = true
+          puts "#{ship.name} has been placed!"
+          puts "~*~*~*~*~*~*~"
         else
           puts "Those coordinates are invalid. Please try again."
         end
       end
     end
+    puts "~*~*~*~*~*~*~"
+    puts "~*~*~*~*~*~*~"
+    puts "LET'S PLAY!"
+    puts "~*~*~*~*~*~*~"
+    puts "~*~*~*~*~*~*~"
     take_turn
   end
 
@@ -92,11 +112,11 @@ class Battleship
 
   # Manages the player’s turn.
   def player_turn
-    puts "Your turn! Here's the computer's board:"
+    puts "~*~*~*~*~*~*~"
+    puts "Here's what the computer's board looks like:"
     puts @computer_board.render
     puts "Enter the coordinate for your shot:"
     coordinate = gets.chomp.upcase
-
     if @computer_board.valid_coordinate?(coordinate) && !@computer_board.cells[coordinate].fired_upon?
       @computer_board.cells[coordinate].fire_upon
       puts feedback(@computer_board.cells[coordinate])
@@ -111,7 +131,10 @@ class Battleship
     coordinate = @player_board.random_unfired_coordinate
     @player_board.cells[coordinate].fire_upon
     puts "Computer fired on #{coordinate}."
+      puts "Here's what your board looks like:"
+    puts @player_board.render
     puts feedback(@player_board.cells[coordinate])
+    puts "~*~*~*~*~*~*~"
   end
 
   # Provides feedback on the result of a shot (miss, hit, sunk).
@@ -123,6 +146,7 @@ class Battleship
     else
       "Hit!"
     end
+    puts "~*~*~*~*~*~*~"
   end
 
 # Checks if either player’s ships are all sunk, ending the game.

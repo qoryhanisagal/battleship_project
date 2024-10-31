@@ -133,7 +133,7 @@ end
         break if valid_placement?(ship, coordinates)
       end
     end
-      puts " Generated coordinates for #{ship.name}: # {coordinates}"
+      # puts " Generated coordinates for #{ship.name}: # {coordinates}"
     coordinates
   end
   
