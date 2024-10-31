@@ -17,7 +17,7 @@ class GameLogic
   include GuessingStrategy     # Provides intelligent guessing for the computer’s moves
   include TwoPlayerMode        # Provides options for Two Player Mode
 
-  attr_reader :player_board, :computer_board, :computer_player, :ships, :winner
+  attr_reader :player1_board, :player2_board, :computer_board, :computer_player, :ships, :winner, :two_player_mode
 
   # Initializes the game setup with boards and ships.
   # QD - Sets up player and computer boards and default ships, preparing game state.
