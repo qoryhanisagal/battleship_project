@@ -8,9 +8,22 @@ class Battleship
 
   # QD - Initializes the game with ships for each player and sets up boards.
   def initialize
-    @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
-    @player_board = Board.new       # Board for the human player.
-    @computer_board = Board.new     # Board for the computer.
+    # JB- edits in order to create 4 ships, 2 for player & 2 for computer
+    @player = {
+      board => Board.new,
+      cruiser => Ship.new('Cruiser', 3),
+      submarine => Ship.new('Submarine', 2)    
+    }
+
+    @computer = {
+      board => Board.new,
+      cruiser => Ship.new('Cruiser', 3),
+      submarine => Ship.new('Submarine', 2)    
+    }
+
+    # @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+    # @player_board = Board.new       # Board for the human player.
+    # @computer_board = Board.new     # Board for the computer.
   end
 
   ####START####

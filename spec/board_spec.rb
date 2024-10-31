@@ -79,7 +79,7 @@ RSpec.describe Board do
       
       # Confirms that placing another ship overlapping with the first returns false.
       # JB - Verifies that overlapping placements are correctly rejected.
-      expect(@board.valid_placement?(@cruiser, ["A2", "A3", "A4"])).to be false
+      expect(@board.valid_placement?(@cruiser, ["A3", "A4", "A5"])).to be false
     end
   end
 
