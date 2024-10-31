@@ -161,3 +161,69 @@ The game is won when either the player or the computer sinks both enemy ships.
 - Describe the pairing technique used.
 - Review GitHub insights: how many pull requests, commits, and how balanced the contributions were.
 - Highlight a PR that demonstrates good commenting and partner review workflow.
+
+
+# Presentation Points
+
+## Demonstration of Functional Completeness
+
+1. **Running the Game and Walkthrough:**
+   - We will demonstrate starting the game in both single-player and two-player modes, showcasing how the game transitions between each mode.
+   - We'll display the board setup and illustrate how taking turns works, allowing for basic gameplay interactions and providing insight into how the game flow is managed.
+
+2. **Edge Case Handling:**
+   - **Invalid Inputs:** Our game handles invalid inputs such as incorrect coordinates, duplicate shots, and improper ship placements, demonstrating the system’s resilience and responsiveness.
+   - **Win Condition Check:** We will show the game ending by announcing the winner as soon as all ships on either the player’s or the computer’s board are sunk, ensuring the win condition is well-defined and clear.
+
+---
+
+## Technical Quality & Organization of Code
+
+1. **Class Structure Overview:**
+   - **GameLogic:** Manages the main game flow, including menu navigation and game setup for both single-player and two-player modes.
+   - **Board:** Represents the game board, responsible for creating the grid and managing ship placement, making this component crucial for tracking game progress.
+   - **Cell:** Manages individual cell states, indicating whether a cell is empty, hit, or occupied by a ship.
+   - **Ship:** Handles ship properties like name and length, as well as its status (sunk or afloat).
+   - **ComputerPlayer:** Manages the computer’s moves, using a dynamic guessing strategy to adjust difficulty as needed.
+
+2. **Modules Used:**
+   - **PlacementValidator:** Ensures ship placements are valid and prevent overlap, helping maintain the integrity of the board.
+   - **Renderer:** Manages board display to make the game visually understandable.
+   - **GuessingStrategy:** Implements intelligent guesses for the computer player based on difficulty, providing a responsive and challenging experience.
+
+3. **Design Decision Highlight:**
+   - One of our key design choices was the **Guessing Strategy Module** for the computer’s moves. This feature dynamically adjusts difficulty, enhancing the game experience by making the computer's strategy more challenging and engaging for players.
+
+---
+
+## Code Refactoring
+
+1. **Identified Refactoring Opportunities:**
+   - We focused on areas where functionality could be modularized for clarity and reuse. For example, **Ship Placement Validation** in the PlacementValidator module was refactored to avoid duplicated checks by breaking down larger methods into smaller, reusable ones.
+   - **Refactored Methods:** We created methods like `valid_placement?`, `within_bounds?`, and `no_overlap?` to streamline validation checks, making the code easier to understand and maintain.
+
+2. **Addressing Remaining Uncertainties:**
+   - We acknowledge that some logic and performance could still benefit from further optimization. Moving forward, user feedback and additional testing may reveal new areas for improvement.
+
+---
+
+## Test Coverage
+
+1. **Examples of Unit and Integration Tests:**
+   - **Unit Tests:** We created comprehensive tests for individual classes, such as the Cell class (testing `fire_upon` behavior) and the Ship class (testing the `sunk?` status).
+   - **Integration Tests:** We also developed integration tests for key methods like `take_turn`, which interacts across multiple classes (GameLogic, Board, and Cell), to ensure a cohesive and reliable game flow.
+
+2. **Running the Test Suite:**
+   - Using SimpleCov, we ran a full test suite, achieving a high coverage percentage across our classes and methods, demonstrating our commitment to a robust and thoroughly tested codebase.
+
+---
+
+## Pairing & Version Control
+
+1. **Pairing Technique:**
+   - We employed a **driver-navigator** pairing approach, where one person coded while the other reviewed. This allowed us to maintain a strong collaborative effort, with both of us contributing ideas and solutions throughout development.
+
+2. **GitHub Insights:**
+   - **Pull Requests:** We maintained an active pull request process, ensuring each significant code change was reviewed, documented, and discussed.
+   - **Contribution Balance:** Both of us contributed evenly, as seen through balanced commit histories, pull request reviews, and comments.
+   - **PR Highlight:** One of our notable pull requests was well-documented, with meaningful comments and issue resolutions that show our attention to detail and commitment to collaboration.
