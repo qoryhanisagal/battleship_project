@@ -91,10 +91,7 @@ end
   
       break if coordinates.all? { |coord| valid_coordinate?(coord) } && valid_placement?(ship, coordinates)
     end
-<<<<<<< HEAD
-=======
       # puts " Generated coordinates for #{ship.name}: # {coordinates}"
->>>>>>> origin/iteration-3/JB-edits
     coordinates
   end
 
