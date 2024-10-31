@@ -10,15 +10,15 @@ class Battleship
   def initialize
     # JB- edits in order to create 4 ships, 2 for player & 2 for computer
     @player = {
-      board => Board.new,
-      cruiser => Ship.new('Cruiser', 3),
-      submarine => Ship.new('Submarine', 2)    
+      'board' => Board.new,
+      'cruiser' => Ship.new('Cruiser', 3),
+      'submarine' => Ship.new('Submarine', 2)    
     }
 
     @computer = {
-      board => Board.new,
-      cruiser => Ship.new('Cruiser', 3),
-      submarine => Ship.new('Submarine', 2)    
+      'board' => Board.new,
+      'cruiser' => Ship.new('Cruiser', 3),
+      'submarine' => Ship.new('Submarine', 2)    
     }
 
     # @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
@@ -67,20 +67,33 @@ class Battleship
 
   # Places ships randomly on the computer's board.
   def place_computer_ships
-    @ships.each do |ship|
-      placed = false
-      until placed
-        coords = @computer_board.random_coordinates_for(ship)  # Random coordinates
-        if @computer_board.valid_placement?(ship, coords)
-          @computer_board.place(ship, coords)
-          placed = true
-        end
+    loop do
+      random_coords = @computer["board"].cells.keys.sample(3).sort
+      if @computer["board"].valid_placement?(@computer["cruiser"], random_coords)
+          @computer["board"].place(@computer["cruiser"], random_coords)
+          break
+
+      else
+          random_coords.clear
       end
     end
+
+    loop do
+      random_coords = @computer["board"].cells.keys.sample(2).sort
+      if @computer["board"].valid_placement?(@computer["submarine"], random_coords)
+        @computer["board"].place(@computer["submarine"], random_coords)
+        break
+
+      else
+        random_coords.clear
+      end
+
+    end
+
     puts "Computer board has been created." # Log generated coordinates BUT do not show player
     puts "~*~*~*~*~*~*~"
   end
-
+############ JB STOPPED HERE #################
   # Guides the player through placing their ships on the board.
   def place_player_ships
     puts "SHIP PLACEMENT RULES:" #to avoid 'invalid coordinate detected' message
